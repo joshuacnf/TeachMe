@@ -28,10 +28,8 @@ async def register(request):
 
 @routes.get('/log-in')
 async def log_in(request):
-    print('!!!')
     query = get_request_query(request)
     user_info = None if ('user-info' not in query) else query['user-info'][0]
-    print('!!!!')
 
     if user_info is None:
         return web.Response(text='incorrect log-in request')
