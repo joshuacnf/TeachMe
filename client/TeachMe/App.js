@@ -11,6 +11,8 @@ import {Platform, StyleSheet, Text, View} from 'react-native';
 import {PostPage} from './src/screens/PostPage/index';
 import {AnswerPage} from './src/screens/AnswerPage/index';
 
+import Route from "./src/config/route"
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
