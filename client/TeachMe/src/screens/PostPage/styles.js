@@ -4,23 +4,23 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       padding: 10,
-      paddingTop: 25,
-      backgroundColor: '#F5FCFF',
+      paddingTop:8,
+      backgroundColor: '#43a1c9',
     },
     title:{
         borderBottomColor: 'grey',
         borderBottomWidth: 1,
         height:40,
         fontSize:20,
-        marginTop:10,
+        marginTop:1,
     },
-    tags:{
+    tagText:{
         flexDirection: 'row',
-        paddingTop:10,
+        paddingTop:5,
         height:35
     },
     tagContainer:{
-        marginTop:8,
+        marginTop:2,
         borderBottomColor: 'grey',
         borderBottomWidth: 1
     },
@@ -29,24 +29,23 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         height:350,
         fontSize:20,
-        marginTop:10,
+        marginTop:5,
 
     },
-    postButton:{
-        marginTop:15,
-        borderRadius: 23,
-        borderColor: 'black',
-        borderWidth: 2,
-        backgroundColor: '#ff3333',
-        height: 46,
-        paddingLeft: 16,
-        paddingRight: 16,
-        width:150,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection:'row-reverse',
+ 
+        postButton:{
+            marginTop:15,
+            backgroundColor:'grey',
+            height: 46,
+            paddingLeft: 16,
+            paddingRight: 16,
+            width:150,
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection:'row-reverse',
+        }
 
     }
-});
+);
 
 export {styles};

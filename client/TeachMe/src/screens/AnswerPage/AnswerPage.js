@@ -14,7 +14,7 @@ class AnswerPage extends Component{
                 />
                 <View style={{flexDirection:'row-reverse'}}>
                     <TouchableOpacity style={styles.postButton}>
-                        <Text>Post</Text>
+                        <Text style={{fontSize:20,color:'black'}}>Post</Text>
                     </TouchableOpacity>
                 </View>
             </View>

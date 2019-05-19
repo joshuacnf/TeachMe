@@ -22,12 +22,12 @@ const styles = StyleSheet.create({
     view: {
         flexDirection: 'row',
         borderRadius: 23,
-        borderColor: 'black',
-        borderWidth: 2,
-        backgroundColor: '#42f4a4',
+        borderColor: 'white',
+        borderWidth: 1,
         height: 46,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor:'white',
         paddingLeft: 16,
         paddingRight: 16
       },

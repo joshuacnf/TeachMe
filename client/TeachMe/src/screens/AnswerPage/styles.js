@@ -4,24 +4,20 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       padding: 10,
-      paddingTop: 40,
-      backgroundColor: '#F5FCFF',
+      backgroundColor: '#43a1c9',
     },
     content:{
         borderTopColor: 'grey',
         borderTopWidth: 1,
         borderBottomColor: 'grey',
         borderBottomWidth: 1,
-        height:510,
+        height:450,
         fontSize:20,
-        marginTop:10
+        marginTop:20
     },
     postButton:{
         marginTop:15,
-        borderRadius: 23,
-        borderColor: 'black',
-        borderWidth: 2,
-        backgroundColor: '#ff3333',
+        backgroundColor:'grey',
         height: 46,
         paddingLeft: 16,
         paddingRight: 16,
