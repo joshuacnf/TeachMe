@@ -1,13 +1,28 @@
 import aiohttp
 import asyncio
+import string
 from aiohttp import web
+
+import pymongo
+from bson.objectid import ObjectId
 
 import urllib
 from urllib.parse import urlparse
-
 import json
+import random
 
-from email import mime
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+mongo_client = pymongo.MongoClient('localhost', 27017)
+db = mongo_client['db']
+db_user = db['user']
+
+########################### Helper Functions ###########################
+
+def generate_rand_string(len):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=len))
 
 def get_request_query(request):
     query = urllib.parse.urlparse(str(request.url)).query
@@ -16,13 +31,14 @@ def get_request_query(request):
 
 def send_verification_email(user_info):
     from_addr = 'jsmith19960401@gmail.com'
-    to_addr = user_info.email
-    msg = mime.multipart.MIMEMultipart()
+    to_addr = user_info['email']
+    msg = MIMEMultipart()
     msg['From'] = from_addr
     msg['To'] = to_addr
     msg['Subject'] = 'Verification Email from TeachMe'
-    body = 'http://0.0.0.0:8080/verify?code={}&user_id={}'.format(12345, user_info.user_id)
-    msg.attach(mime.text.MIMEText(body))
+    body = 'http://0.0.0.0:8080/verify?code={}&id={}'.format(
+        user_info['verification_code'], str(user_info['_id']))
+    msg.attach(MIMEText(body))
 
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.ehlo()
@@ -34,49 +50,78 @@ def send_verification_email(user_info):
     server.quit()
 
 
+########################### Request Handlers ###########################
+
 routes = web.RouteTableDef()
 
+# registration request handler
 @routes.get('/register')
 async def register(request):
+    # extract user_info from user-registration request
     query = get_request_query(request)
-    user_info = None if ('user-info' not in query) else query['user-info'][0]
-
+    user_info = None if ('user_info' not in query) else query['user_info'][0]
     if user_info is None:
-        resp = 'incorrect registration request'
-    else:
-        resp = 'Done'
+        return web.Response(text='Invalid Registration Request')
+    user_info = json.loads(user_info)
 
-    return web.Response(text=resp)
+    # if an email address is already in db, check whether it is verified or not
+    result = db_user.find_one({'email': user_info['email']})
+    if result is not None:
+        if result['verified'] == True:
+            return web.Response(text='Email Already Registered')
+        if result['verified'] == False:
+            db_user.delete_one({'_id', result['_id']})
 
+    user_info['verified'] = False
+    user_info['verification_code'] = generate_rand_string(64)
+    db_user.insert_one(user_info)
+    print(user_info)
+    send_verification_email(user_info)
+
+    return web.Response(text='Registration Request Completed')
+
+# verification request handler
 @routes.get('/verify')
 async def verify(request):
     query = get_request_query(request)
     code = None if ('code' not in query) else query['code'][0]
-    user_info = None if ('user-info' not in query) else query['user-info'][0]
+    user_id = None if ('id' not in query) else query['id'][0]
 
-    if code is None or user_info is None:
-        return web.Response(text='incorrect verification request')
+    print('1')
+    if code is None or user_id is None:
+        return web.Response(text='Account Verification Failed')
 
-    
+    print('2')
+    user_id = ObjectId(user_id)
+    user_info = db_user.find_one({'_id': user_id})
+    print(user_info)
+    if user_info is None or user_info['verification_code'] != code:
+        return web.Response(text='Account Verification Failed')
 
-@routes.get('/log-in')
+    db_user.update_one({'_id': user_id}, {'$set': {'verified': True}})
+
+    return web.Response(text='Account Verified')
+
+# log-in request handler
+@routes.get('/login')
 async def log_in(request):
     query = get_request_query(request)
-    user_info = None if ('user-info' not in query) else query['user-info'][0]
+    user_info = None if ('user_info' not in query) else query['user_info'][0]
 
     if user_info is None:
         return web.Response(text='incorrect log-in request')
-
-    print(user_info)
+    
     user_info = json.loads(user_info)
     if not isinstance(user_info, dict):
-        return web.Response(text='incorrect user-info in log-in request')
+        return web.Response(text='incorrect user_info in log-in request')
 
-    email = user_info['email']
-    passwd = user_info['passwd']
-    resp = 'email: ' + email + '\n'
-    resp += 'passwd: ' + passwd + '\n'
-    return web.Response(text=resp)
+    result = db_user.find_one({'_id': ObjectId(user_info['_id']), 
+        'password': user_info['password']})
+
+    if result is None:
+        return web.Response(text='Login Failed')
+
+    return web.Response(text='Login Succeeded')
 
 
 @routes.get('/get/{info}')
