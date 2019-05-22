@@ -18,6 +18,8 @@ from email.mime.text import MIMEText
 mongo_client = pymongo.MongoClient('localhost', 27017)
 db = mongo_client['db']
 db_user = db['user']
+db_post = db['post']
+db_answer = db['answer']
 
 ########################### Helper Functions ###########################
 
@@ -68,7 +70,7 @@ async def register(request):
     result = db_user.find_one({'email': user_info['email']})
     if result is not None:
         if result['verified'] == True:
-            return web.Response(text='Email Already Registered')
+            return web.Response(status=200, text='Email Already Registered')
         if result['verified'] == False:
             db_user.delete_one({'_id', result['_id']})
 
@@ -78,7 +80,7 @@ async def register(request):
     print(user_info)
     send_verification_email(user_info)
 
-    return web.Response(text='Registration Request Completed')
+    return web.Response(status=200, text='Registration Request Completed')
 
 # verification request handler
 @routes.get('/verify')
@@ -89,18 +91,18 @@ async def verify(request):
 
     print('1')
     if code is None or user_id is None:
-        return web.Response(text='Account Verification Failed')
+        return web.Response(status=400, text='Account Verification Failed')
 
     print('2')
     user_id = ObjectId(user_id)
     user_info = db_user.find_one({'_id': user_id})
     print(user_info)
     if user_info is None or user_info['verification_code'] != code:
-        return web.Response(text='Account Verification Failed')
+        return web.Response(status=400, text='Account Verification Failed')
 
     db_user.update_one({'_id': user_id}, {'$set': {'verified': True}})
 
-    return web.Response(text='Account Verified')
+    return web.Response(staus=200, text='Account Verified')
 
 # log-in request handler
 @routes.get('/login')
@@ -121,7 +123,34 @@ async def log_in(request):
     if result is None:
         return web.Response(text='Login Failed')
 
-    return web.Response(text='Login Succeeded')
+    return web.Response(status=200, text='Login Succeeded')
+
+# post request handler
+@routes.get('/get/post')
+async def get_post(request):
+    query = get_request_query(request)
+    post_info = None if ('post_info' not in query) else query['post_info'][0]
+
+    if post_info is None:
+        return web.Response(text='incorrent post request')
+
+    post_info = json.loads(post_info)
+    if not instance(post_info, dict):
+        return web.Response(text='incorrect post_info in post request')
+    
+    summary_result = db_post.find_one({'_id': ObjectID(post_info['_id'])})
+    answers_result = db_answer.find({'post_id': ObjectID(post_info['_id'])})
+
+    if summary_result is None:
+        return web.Response(text='No such post')
+    
+    summary_result['answers'] = []
+
+    for answer in answers_result:
+        summary_result['answers'].append(answer)
+
+    return web.Response(text=json.dumps(summary_result))
+    
 
 
 @routes.get('/get/{info}')
