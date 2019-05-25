@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import { View, Text } from 'react-native';
-import { Button, Card } from 'react-native-elements';
-import { TextInput } from 'react-native-gesture-handler';
+import { View, Text, Button } from 'react-native';
+import { Card } from 'react-native-elements';
 
 import styles from './style'
 
@@ -14,16 +13,11 @@ export default class Post extends Component {
         super(props);
         this.navigation = props.navigation;
         this.state = {
-            answer: '',
         };
     }
     
-    _submitAnswer = answer => {
-        this.setState({answer});
-    }
-
-    _changeAnswer(){
-        // POST
+    _addAnswer = () => {
+        // navigate to answer page
     }
 
     render() {
@@ -57,16 +51,32 @@ export default class Post extends Component {
                         details
                     </Text>
                 </Card>
-                <TextInput
-                    placeholder='your answer here'
-                    onChange={this._changeAnswer}
-                    style={styles.textbox}
-                />
+                <Card>
+                    <Text>
+                        answer 1
+                    </Text>
+                </Card>
+                <Card>
+                    <Text>
+                        answer 2
+                    </Text>
+                </Card>
+                <Card>
+                    <Text>
+                        answer 3
+                    </Text>
+                </Card>
                 <Button
-                    onPress={this._submitAnswer}
-                    title="Submit" 
-                    style={styles.button}
+                    onPress={this._addAnswer}
+                    title="add your answer" 
+                    style={styles.buttonText}
                 />
+                {/* <TouchableHighlight 
+                    style={styles.addButton}
+                    onPress = {this._addAnswer}
+                >
+                    <Icon name="plus" size={30}/>
+                </TouchableHighlight> */}
             </View>
         );
     }
