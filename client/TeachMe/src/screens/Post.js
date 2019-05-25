@@ -15,10 +15,6 @@ export default class Post extends Component {
         this.state = {
         };
     }
-    
-    _addAnswer = () => {
-        // navigate to answer page
-    }
 
     render() {
         return (
@@ -67,7 +63,7 @@ export default class Post extends Component {
                     </Text>
                 </Card>
                 <Button
-                    onPress={this._addAnswer}
+                    onPress={() => this.navigation.navigate('AnswerPage')} 
                     title="add your answer" 
                     style={styles.buttonText}
                 />
