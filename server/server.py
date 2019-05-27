@@ -225,7 +225,7 @@ async def get_profile(request):
     if not isinstance(user_info, dict):
         return web.Response(status=400, text='incorrect user_info in home request')
 
-    result = db_user.find_one({'_id': ObjectId(user_info['_id']))
+    result = db_user.find_one({'_id': ObjectId(user_info['_id'])})
 
     if result is None:
         return web.Response(status=404, text='Cannot find the user')
