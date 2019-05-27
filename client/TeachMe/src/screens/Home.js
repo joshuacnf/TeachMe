@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { View, Button, Text, FlatList, TouchableOpacity } from 'react-native';
-import { Card, SearchBar} from 'react-native-elements';
+import { Card, SearchBar } from 'react-native-elements';
 
 import styles from './style'
 
