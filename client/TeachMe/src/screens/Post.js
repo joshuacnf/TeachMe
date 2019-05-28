@@ -3,11 +3,20 @@ import { View, Text, Button } from 'react-native';
 import { Card } from 'react-native-elements';
 
 import styles from './style'
+import axios from 'axios';
 
 export default class Post extends Component {
     static navigationOptions = {
         title: "Post"
     };
+
+    // componentDidMount() {
+    //     axios.get('http://18.221.224.217:8080/get')
+    //         .then(res => {
+    //             console.log(res);
+    //             this.setState({posts: res.data});
+    //         })
+    // }
   
     constructor(props) {
         super(props);
