@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import { View, Button, Text, FlatList, TouchableOpacity } from 'react-native';
-import { Card, SearchBar } from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
+import { Card } from '@shoutem/ui'
 
-import styles from './style'
+import styles from './style';
+import axios from 'axios';
 
 const posts = [
     {
@@ -31,21 +33,29 @@ const posts = [
 export default class Home extends Component {
     static navigationOptions = {
       title: 'Home'
-    };
+    }
+
+    componentDidMount() {
+        axios.get('http://18.221.224.217:8080/register?')
+            .then(res => {
+                console.log(res);
+                this.setState({posts: res.data});
+            })
+    }
   
     constructor(props) {
         super(props);
         this.navigation = props.navigation;
         this.state = {
             search: '',
-            data: posts,
+            posts: {},
         }
     }
     
     _renderItem = item => {
         return (
             <TouchableOpacity 
-                onPress = {this._showPost}
+                onPress = {this._showPost(item.postId)}
             >
                 <Card
                 >
@@ -63,8 +73,8 @@ export default class Home extends Component {
         this.setState({search});
     }
 
-    _showPost = () => {
-        this.navigation.navigate('Post');
+    _showPost = postId => {
+        this.navigation.navigate('Post', {id: postId});
     }
 
     render() {
@@ -79,13 +89,13 @@ export default class Home extends Component {
                     style={styles.search}
                 />
                 <FlatList
-                    data={this.state.data}
+                    posts={this.state.posts}
                     renderItem={({item}) => this._renderItem(item)}
                     keyExtractor={(item, index) => item.author}
                 />
 
                 <Button 
-                    title="Post" 
+                    title="Add Question" 
                     onPress={() => this.navigation.navigate('Post')} 
                     style={styles.buttonText}
                 />
