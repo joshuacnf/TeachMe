@@ -10,6 +10,7 @@ import urllib
 from urllib.parse import urlparse
 import json
 import random
+import time
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -22,6 +23,7 @@ db_user = db['user']
 db_tag = db['tag']
 db_post = db['post']
 db_answer = db['answer']
+db_pic = db['pic']
 
 ########################### Helper Functions ###########################
 
@@ -178,7 +180,7 @@ async def get_answer(request):
     return web.Response(status=200, text=json.dumps(result))
 
 # get pic request handler
-@route.get('/get/pic')
+@routes.get('/get/pic')
 async def get_pic(request):
     query = get_request_query(request)
     pic_id = query['pic_id'][0]
@@ -193,7 +195,29 @@ async def get_pic(request):
 # post post request handler
 @routes.post('/post/post')
 async def post_post(request):
-    pass
+    query = get_request_query(request)
+
+    post = await request.json()
+    post['pics_id'] = []
+    post['answers_id'] = []
+    # post['post_summary']['post_id'] = ''
+    post['timestamp_create'] = int(time.time())
+
+    if 'pics' in post:
+        for p in post['pics']:
+            doc = {'img_b64': p}
+            with open('res', 'a+') as f:
+                f.write(p + '\n')
+            db_pic.insert_one(doc)
+            post['pics_id'].append(str(doc['_id']))
+        del post['pics']
+
+    db_post.insert_one(post)
+    post_id = str(post['_id'])
+    db_post.update_one({'_id': ObjectId(post_id)},
+        {'$set': {'post_summary.post_id': post_id}})
+
+    return web.Response(status=200, text='post successful')
 
 
 # post answer request handler
@@ -201,31 +225,14 @@ async def post_post(request):
 async def post_answer(request):
     pass
 
-# post 
+# post
 
 # profile request handler
 @routes.get('/get/profile')
 async def get_profile(request):
     query = get_request_query(request)
     user_info = None if ('user_info' not in query) else query['user_info'][0]
-
-    if user_info is None:
-        return web.Response(status=400, text='incorrect profile request')
-
-    user_info = json.loads(user_info)
-    if not isinstance(user_info, dict):
-        return web.Response(status=400, text='incorrect user_info in home request')
-
-    result = None
-    if 'user_id' in user_info:
-        result = db_user.find_one({'_id': ObjectId('user_id')})
-    elif 'email' in user_info:
-        result = db_user.find_one({'email': user_info['email']})
-
-    if result is None:
-        return web.Response(status=404, text='No Result Found')
-
-    return web.Response(status=200, text=json.dumps(result))
+    
 
 app = web.Application()
 app.add_routes(routes)
