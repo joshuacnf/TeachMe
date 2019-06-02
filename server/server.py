@@ -24,6 +24,7 @@ db_tag = db['tag']
 db_post = db['post']
 db_answer = db['answer']
 db_pic = db['pic']
+db_message = db['message']
 
 ########################### Helper Functions ###########################
 
@@ -60,7 +61,7 @@ def send_verification_email(user_info):
     server.quit()
 
 
-########################### Request Handlers ###########################
+########################### Request Handlers (GET) ###########################
 
 routes = web.RouteTableDef()
 
@@ -130,6 +131,21 @@ async def get_login(request):
 
     return web.Response(status=200, text='Login Succeeded')
 
+# get profile request handler
+@routes.get('/get/profile')
+async def get_profile(request):
+    query = get_request_query(request)
+    user_info = None if ('user_info' not in query) else query['user_info'][0]
+
+    email = user_info['email']
+    user_info = db_user.find_one({'email': email})
+    if user_info is None:
+        return web.Response(status=404, text='No Result Found (profile)')
+    
+    del user_info['_id']
+
+    return web.Response(status=200, text=json.dumps(user_info))
+
 # get post list request handler
 @routes.get('/get/post_summary_list')
 async def get_post_summary_list(request):
@@ -145,12 +161,15 @@ async def get_post_summary_list(request):
         else:
             result = interesection(result, tmp)
 
+    # TODO
+
     tmp = []
     for idx in result:
         x = db_post.find_one({'_id': ObjectId(idx)})
+        del x['_id']
         tmp.append(x['post_summary'])
     result = tmp
-
+    
     return web.Response(status=200, text=json.dumps(result))
 
 # get post request handler
@@ -163,7 +182,8 @@ async def get_post(request):
 
     if result is None:
         return web.Response(status=404, text='No Result Found')
-
+    
+    del result['_id']
     return web.Response(status=200, text=json.dumps(result))
 
 # get answer request handler
@@ -192,6 +212,36 @@ async def get_pic(request):
 
     return web.Response(status=200, text=result['blob'])
 
+# get chat request handler
+# get the full chat history between user1 and user2
+@routes.get('/get/chat')
+async def get_chat(request):
+    query = get_request_query(request)
+    user1_id, user2_id = query['user1_id'][0], query['user2_id'][0]
+    
+    result = db_message.find({'$or': [
+        {'from': user1_id, 'to': user2_id},
+        {'from': user2_id, 'to': user1_id}
+    ]}).sort({'timestamp': 1})
+
+    for doc in result:
+        del doc['_id']
+
+    return web.Response(status=200, text=json.dumps(doc))
+
+# get chat_summary_list request handler
+# get the chat_sumary_list for a user
+@routes.get('/get/chat_summary_list')
+async def get_chat_summary_list(request):
+    query = get_request_query(request)
+    user_id = query['user_id'][0]
+
+    result = db_message.find()
+
+    # TODO
+
+########################### Request Handlers (POST) ###########################
+
 # post post request handler
 @routes.post('/post/post')
 async def post_post(request):
@@ -201,7 +251,7 @@ async def post_post(request):
     post['pics_id'] = []
     post['answers_id'] = []
     # post['post_summary']['post_id'] = ''
-    post['timestamp_create'] = int(time.time())
+    post['post_summary']['timestamp_create'] = int(time.time())
 
     if 'pics' in post:
         for p in post['pics']:
@@ -217,23 +267,67 @@ async def post_post(request):
     db_post.update_one({'_id': ObjectId(post_id)},
         {'$set': {'post_summary.post_id': post_id}})
 
-    return web.Response(status=200, text='post successful')
-
+    return web.Response(status=200, text='success (post)')
 
 # post answer request handler
 @routes.post('/post/answer')
 async def post_answer(request):
-    pass
-
-# post
-
-# profile request handler
-@routes.get('/get/profile')
-async def get_profile(request):
     query = get_request_query(request)
-    user_info = None if ('user_info' not in query) else query['user_info'][0]
-    
 
-app = web.Application()
-app.add_routes(routes)
-web.run_app(app)
+    answer = await request.json()
+    answer['pics_id'] = []
+    answer['timestamp_create'] = ''
+
+    if 'pics' in answer:
+        for p in answer['pics']:
+            doc = {'img64': p}
+            db_pic.insert_one(doc)
+            answer['pics_id'].append(str(doc['_id']))
+        del answer['pics']
+
+    db_answer.insert_one(answer)
+    answer_id = str(answer['_id'])
+    db_post.update_one({'_id': ObjectId(answer_id)},
+        {'$set': {'answer_id': answer_id}})
+
+    return web.Response(status=200, text='success (answer)')
+
+# post profile_pic request handler
+@routes.post('/post/profile_pic')
+async def post_profile_pic(request):
+    query = get_request_query(request)
+    user_id = query['user_id'][0]
+
+    pic = await request.text()
+
+    user_info = db_user.find_one({'_id': ObjectId(user_id)})
+    if 'pic_id' in user_info:
+        db_pic.update_one({'_id': ObjectId(user_info['pic_id'])},
+            {'$set': {'img_b64': pic}})
+    else:
+        doc = {'img_b64': pic}
+        db_pic.insert_one(doc)
+        pic_id = str(doc['_id'])
+        db_user.update_one({'_id': ObjectId(user_id)},
+            {'$set': {'pic_id': pic_id}})
+
+    return web.Response(status=200, text='success (profile_pic)')
+
+# post message request handler
+@routes.post('/post/message')
+async def post_message(request):
+    # query = get_request_query(request)
+    # src_id, dst_id = query['from'][0], query['to'][0]
+
+    msg = await request.json()
+    db_message.insert_one(msg)
+
+    return web.Response(status=200, text='success (message sent)')
+
+def main():
+    app = web.Application()
+    app.add_routes(routes)
+    web.run_app(app)
+
+if __name__ == '__main__':
+    main()
