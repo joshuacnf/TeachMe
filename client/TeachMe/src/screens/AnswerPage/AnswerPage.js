@@ -1,8 +1,17 @@
 import React, {Component} from 'react';
 import {View,Text,TextInput,Button,TouchableOpacity} from 'react-native';
 import {styles} from './styles';
+import axios from 'axios';
 
 class AnswerPage extends Component{
+
+    componentDidMount(){
+        axios.get('http://18.221.224.217:8080/register?')
+            .then((res) => {
+                console.log(res);
+            })
+    }
+
     render(){
         return (
             <View style={styles.container}>
