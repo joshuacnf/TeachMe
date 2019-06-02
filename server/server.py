@@ -10,6 +10,7 @@ import urllib
 from urllib.parse import urlparse
 import json
 import random
+import time
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -17,12 +18,19 @@ from email.mime.text import MIMEText
 
 mongo_client = pymongo.MongoClient('localhost', 27017)
 db = mongo_client['db']
+
 db_user = db['user']
+db_tag = db['tag']
 db_post = db['post']
 db_answer = db['answer']
-db_max = db['max']
+db_pic = db['pic']
+db_message = db['message']
 
 ########################### Helper Functions ###########################
+
+def intersection(A, B):
+    C = [x for x in A if x in B]
+    return C
 
 def generate_rand_string(len):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=len))
@@ -36,10 +44,10 @@ def send_verification_email(user_info):
     from_addr = 'jsmith19960401@gmail.com'
     to_addr = user_info['email']
     msg = MIMEMultipart()
-    msg['From'] = from_addr
+    msg['From'] = 'TeachMe Registration' + ' <{}>'.format(from_addr)
     msg['To'] = to_addr
     msg['Subject'] = 'Verification Email from TeachMe'
-    body = 'http://0.0.0.0:8080/verify?code={}&id={}'.format(
+    body = 'http://18.221.224.217:8080/verify?code={}&id={}'.format(
         user_info['verification_code'], str(user_info['_id']))
     msg.attach(MIMEText(body))
 
@@ -53,13 +61,13 @@ def send_verification_email(user_info):
     server.quit()
 
 
-########################### Request Handlers ###########################
+########################### Request Handlers (GET) ###########################
 
 routes = web.RouteTableDef()
 
 # registration request handler
 @routes.get('/register')
-async def register(request):
+async def get_register(request):
     # extract user_info from user-registration request
     query = get_request_query(request)
     user_info = None if ('user_info' not in query) else query['user_info'][0]
@@ -73,7 +81,7 @@ async def register(request):
         if result['verified'] == True:
             return web.Response(status=200, text='Email Already Registered')
         if result['verified'] == False:
-            db_user.delete_one({'_id', result['_id']})
+            db_user.delete_one({'_id': result['_id']})
 
     user_info['verified'] = False
     user_info['verification_code'] = generate_rand_string(64)
@@ -85,40 +93,37 @@ async def register(request):
 
 # verification request handler
 @routes.get('/verify')
-async def verify(request):
+async def get_verify(request):
     query = get_request_query(request)
     code = None if ('code' not in query) else query['code'][0]
     user_id = None if ('id' not in query) else query['id'][0]
 
-    print('1')
     if code is None or user_id is None:
         return web.Response(status=400, text='Account Verification Failed')
 
-    print('2')
     user_id = ObjectId(user_id)
     user_info = db_user.find_one({'_id': user_id})
-    print(user_info)
     if user_info is None or user_info['verification_code'] != code:
         return web.Response(status=400, text='Account Verification Failed')
 
     db_user.update_one({'_id': user_id}, {'$set': {'verified': True}})
 
-    return web.Response(staus=200, text='Account Verified')
+    return web.Response(status=200, text='Account Verified')
 
 # log-in request handler
 @routes.get('/login')
-async def log_in(request):
+async def get_login(request):
     query = get_request_query(request)
     user_info = None if ('user_info' not in query) else query['user_info'][0]
 
     if user_info is None:
         return web.Response(status=400, text='incorrect log-in request')
-    
+
     user_info = json.loads(user_info)
     if not isinstance(user_info, dict):
         return web.Response(status=400, text='incorrect user_info in log-in request')
 
-    result = db_user.find_one({'_id': ObjectId(user_info['_id']), 
+    result = db_user.find_one({'email': user_info['email'],
         'password': user_info['password']})
 
     if result is None:
@@ -126,116 +131,203 @@ async def log_in(request):
 
     return web.Response(status=200, text='Login Succeeded')
 
-# post request handler
-@routes.get('/get/post')
-async def get_post(request):
-    query = get_request_query(request)
-    post_info = None if ('post_info' not in query) else query['post_info'][0]
-
-    if post_info is None:
-        return web.Response(status=400, text='incorrent post request')
-
-    post_info = json.loads(post_info)
-    if not instance(post_info, dict):
-        return web.Response(status=400, text='incorrect post_info in post request')
-    
-    summary_result = db_post.find_one({'_id': ObjectID(post_info['_id'])})
-    answers_result = db_answer.find({'post_id': ObjectID(post_info['_id'])})
-
-    if summary_result is None:
-        return web.Response(status=404, text='No such post')
-    
-    summary_result['answers'] = []
-
-    for answer in answers_result:
-        summary_result['answers'].append(answer)
-
-    return web.Response(status=200, text=json.dumps(summary_result))
-    
-# posting request handler
-@routes.get('/get/posting')
-async def get_posting(request):
-    query = get_request_query(request)
-    post_info = None if ('post_info' not in query) else query['post_info'][0]
-
-    if post_info is None:
-        return web.Response(status=400, text='incorrent posting request')
-
-    post_info = json.loads(post_info)
-    if not instance(post_info, dict):
-        return web.Response(status=400, text='incorrect post_info in posting request')
-    
-    post_id = db_max.find_one({'category': 'post_id'})
-
-    if post_id is None:
-        post_id = 0
-        db_max.insert_one({'category': 'post_id', '_id': 0})
-    else:
-        post_id = post_id['_id']
-        db_max.update_one({'category': 'post_id'}, {'$inc': {'_id': 1}})
-
-    post_info['_id'] = post_id
-    db_post.insert_one(post_info)
-
-    return web.Response(status=200, text="posting successfully")
-
-
-# answering request handler
-@routes.get('/get/answering')
-async def get_answering(request):
-    query = get_request_query(request)
-    answer_info = None if ('answer_info' not in query) else query['answer_info'][0]
-
-    if answer_info is None:
-        return web.Response(status=400, text='incorrent answering request')
-
-    answer_info = json.loads(answer_info)
-    if not instance(answer_info, dict):
-        return web.Response(status=400, text='incorrect answer_info in answering request')
-    
-    answer_id = db_max.find_one({'category': 'answer_id'})
-
-    if answer_id is None:
-        answer_id = 0
-        db_max.insert_one({'category': 'answer_id', '_id': 0})
-    else:
-        answer_id = answer_id['_id']
-        db_max.update_one({'category': 'answer_id'}, {'$inc': {'_id': 1}})
-
-    answer_info['_id'] = answer_id
-    db_answer.insert_one(answer_info)
-
-    return web.Response(status=200, text="answering successfully")
-
-# home request handler
-@routes.get('/get/home')
-async def get_home(request):
-    pass
-
-# profile request handler
+# get profile request handler
 @routes.get('/get/profile')
 async def get_profile(request):
     query = get_request_query(request)
     user_info = None if ('user_info' not in query) else query['user_info'][0]
 
+    email = user_info['email']
+    user_info = db_user.find_one({'email': email})
     if user_info is None:
-        return web.Response(status=400, text='incorrect profile request')
+        return web.Response(status=404, text='No Result Found (profile)')
     
-    user_info = json.loads(user_info)
-    if not isinstance(user_info, dict):
-        return web.Response(status=400, text='incorrect user_info in home request')
+    del user_info['_id']
 
-    result = db_user.find_one({'_id': ObjectId(user_info['_id'])})
+    return web.Response(status=200, text=json.dumps(user_info))
+
+# get post list request handler
+@routes.get('/get/post_summary_list')
+async def get_post_summary_list(request):
+    query = get_request_query(request)
+    user_info = None if ('user_info' not in query) else query['user_info'][0]
+    tags = [] if ('tags' not in query) else json.loads(query['tags'])
+
+    result = []
+    for tag in tags:
+        tmp = [ x for x in db_tag.find({'tag': tag}) ]
+        if not result:
+            result = tmp
+        else:
+            result = interesection(result, tmp)
+
+    # TODO
+
+    tmp = []
+    for idx in result:
+        x = db_post.find_one({'_id': ObjectId(idx)})
+        del x['_id']
+        tmp.append(x['post_summary'])
+    result = tmp
+    
+    return web.Response(status=200, text=json.dumps(result))
+
+# get post request handler
+@routes.get('/get/post')
+async def get_post(request):
+    query = get_request_query(request)
+    post_id = query['post_id'][0]
+
+    result = db_post.find_one({'_id': ObjectId(post_id)})
 
     if result is None:
-        return web.Response(status=404, text='Cannot find the user')
+        return web.Response(status=404, text='No Result Found')
+    
+    del result['_id']
+    return web.Response(status=200, text=json.dumps(result))
+
+# get answer request handler
+@routes.get('/get/answer')
+async def get_answer(request):
+    query = get_request_query(request)
+    answer_id = query['answer_id'][0]
+
+    result = db_answer.find_one({'_id': ObjectId(answer_id)})
+
+    if result is None:
+        return web.Response(status=404, text='No Result Found')
 
     return web.Response(status=200, text=json.dumps(result))
 
-@routes.get('/get/{info}')
-async def get(request):
-    pass
+# get pic request handler
+@routes.get('/get/pic')
+async def get_pic(request):
+    query = get_request_query(request)
+    pic_id = query['pic_id'][0]
 
-app = web.Application()
-app.add_routes(routes)
-web.run_app(app)
+    result = db_pic.find_one({'_id': ObjectId(pic_id)})
+
+    if result is None:
+        return web.Response(status=404, text='No Result Found')
+
+    return web.Response(status=200, text=result['blob'])
+
+# get chat request handler
+# get the full chat history between user1 and user2
+@routes.get('/get/chat')
+async def get_chat(request):
+    query = get_request_query(request)
+    user1_id, user2_id = query['user1_id'][0], query['user2_id'][0]
+    
+    result = db_message.find({'$or': [
+        {'from': user1_id, 'to': user2_id},
+        {'from': user2_id, 'to': user1_id}
+    ]}).sort({'timestamp': 1})
+
+    for doc in result:
+        del doc['_id']
+
+    return web.Response(status=200, text=json.dumps(doc))
+
+# get chat_summary_list request handler
+# get the chat_sumary_list for a user
+@routes.get('/get/chat_summary_list')
+async def get_chat_summary_list(request):
+    query = get_request_query(request)
+    user_id = query['user_id'][0]
+
+    result = db_message.find()
+
+    # TODO
+
+########################### Request Handlers (POST) ###########################
+
+# post post request handler
+@routes.post('/post/post')
+async def post_post(request):
+    query = get_request_query(request)
+
+    post = await request.json()
+    post['pics_id'] = []
+    post['answers_id'] = []
+    # post['post_summary']['post_id'] = ''
+    post['post_summary']['timestamp_create'] = int(time.time())
+
+    if 'pics' in post:
+        for p in post['pics']:
+            doc = {'img_b64': p}
+            with open('res', 'a+') as f:
+                f.write(p + '\n')
+            db_pic.insert_one(doc)
+            post['pics_id'].append(str(doc['_id']))
+        del post['pics']
+
+    db_post.insert_one(post)
+    post_id = str(post['_id'])
+    db_post.update_one({'_id': ObjectId(post_id)},
+        {'$set': {'post_summary.post_id': post_id}})
+
+    return web.Response(status=200, text='success (post)')
+
+# post answer request handler
+@routes.post('/post/answer')
+async def post_answer(request):
+    query = get_request_query(request)
+
+    answer = await request.json()
+    answer['pics_id'] = []
+    answer['timestamp_create'] = ''
+
+    if 'pics' in answer:
+        for p in answer['pics']:
+            doc = {'img64': p}
+            db_pic.insert_one(doc)
+            answer['pics_id'].append(str(doc['_id']))
+        del answer['pics']
+
+    db_answer.insert_one(answer)
+    answer_id = str(answer['_id'])
+    db_post.update_one({'_id': ObjectId(answer_id)},
+        {'$set': {'answer_id': answer_id}})
+
+    return web.Response(status=200, text='success (answer)')
+
+# post profile_pic request handler
+@routes.post('/post/profile_pic')
+async def post_profile_pic(request):
+    query = get_request_query(request)
+    user_id = query['user_id'][0]
+
+    pic = await request.text()
+
+    user_info = db_user.find_one({'_id': ObjectId(user_id)})
+    if 'pic_id' in user_info:
+        db_pic.update_one({'_id': ObjectId(user_info['pic_id'])},
+            {'$set': {'img_b64': pic}})
+    else:
+        doc = {'img_b64': pic}
+        db_pic.insert_one(doc)
+        pic_id = str(doc['_id'])
+        db_user.update_one({'_id': ObjectId(user_id)},
+            {'$set': {'pic_id': pic_id}})
+
+    return web.Response(status=200, text='success (profile_pic)')
+
+# post message request handler
+@routes.post('/post/message')
+async def post_message(request):
+    # query = get_request_query(request)
+    # src_id, dst_id = query['from'][0], query['to'][0]
+
+    msg = await request.json()
+    db_message.insert_one(msg)
+
+    return web.Response(status=200, text='success (message sent)')
+
+def main():
+    app = web.Application()
+    app.add_routes(routes)
+    web.run_app(app)
+
+if __name__ == '__main__':
+    main()
