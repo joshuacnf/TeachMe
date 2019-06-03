@@ -14,10 +14,10 @@ class AnswerPage extends Component{
         this.state = {
             user_id:'',
             post_id:'',
-            content = '',
-            pics = [],
-            pics_id = []
-        }
+            content:'',
+            pics:[],
+            pics_id:[],
+        };
     }
 
     _answer(){

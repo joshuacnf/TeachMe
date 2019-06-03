@@ -20,8 +20,8 @@ class PostPage extends Component {
             user_id: '',
             tags:[],
             content:'',
-            pics: []            
-        }
+            pics: [],
+        };
     }
 
     _post() {
