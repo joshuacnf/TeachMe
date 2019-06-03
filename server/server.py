@@ -25,6 +25,9 @@ db_post = db['post']
 db_answer = db['answer']
 db_pic = db['pic']
 db_message = db['message']
+db_chat = db['chat_summary']
+
+IP = '18.221.224.217'
 
 ########################### Helper Functions ###########################
 
@@ -47,7 +50,7 @@ def send_verification_email(user_info):
     msg['From'] = 'TeachMe Registration' + ' <{}>'.format(from_addr)
     msg['To'] = to_addr
     msg['Subject'] = 'Verification Email from TeachMe'
-    body = 'http://18.221.224.217:8080/verify?code={}&id={}'.format(
+    body = 'http://0.0.0.0:8080/verify?code={}&id={}'.format(
         user_info['verification_code'], str(user_info['_id']))
     msg.attach(MIMEText(body))
 
@@ -86,7 +89,9 @@ async def get_register(request):
     user_info['verified'] = False
     user_info['verification_code'] = generate_rand_string(64)
     db_user.insert_one(user_info)
-    print(user_info)
+    db_user.update_one({'_id': user_info['_id']},
+        {'$set': {'user_id': str(user_info['_id'])}})
+
     send_verification_email(user_info)
 
     return web.Response(status=200, text='Registration Request Completed')
@@ -124,7 +129,7 @@ async def get_login(request):
         return web.Response(status=400, text='incorrect user_info in log-in request')
 
     result = db_user.find_one({'email': user_info['email'],
-        'password': user_info['password']})
+        'password': user_info['password'], 'verified': True})
 
     if result is None:
         return web.Response(status=404, text='Login Failed')
@@ -135,14 +140,14 @@ async def get_login(request):
 @routes.get('/get/profile')
 async def get_profile(request):
     query = get_request_query(request)
-    user_info = None if ('user_info' not in query) else query['user_info'][0]
-
-    email = user_info['email']
+    email = None if ('email' not in query) else query['email'][0]
+    
     user_info = db_user.find_one({'email': email})
     if user_info is None:
         return web.Response(status=404, text='No Result Found (profile)')
-    
+
     del user_info['_id']
+    del user_info['password']
 
     return web.Response(status=200, text=json.dumps(user_info))
 
@@ -169,7 +174,7 @@ async def get_post_summary_list(request):
         del x['_id']
         tmp.append(x['post_summary'])
     result = tmp
-    
+
     return web.Response(status=200, text=json.dumps(result))
 
 # get post request handler
@@ -182,7 +187,7 @@ async def get_post(request):
 
     if result is None:
         return web.Response(status=404, text='No Result Found')
-    
+
     del result['_id']
     return web.Response(status=200, text=json.dumps(result))
 
@@ -210,7 +215,7 @@ async def get_pic(request):
     if result is None:
         return web.Response(status=404, text='No Result Found')
 
-    return web.Response(status=200, text=result['blob'])
+    return web.Response(status=200, text=result['b64'])
 
 # get chat request handler
 # get the full chat history between user1 and user2
@@ -218,16 +223,17 @@ async def get_pic(request):
 async def get_chat(request):
     query = get_request_query(request)
     user1_id, user2_id = query['user1_id'][0], query['user2_id'][0]
-    
+
     result = db_message.find({'$or': [
         {'from': user1_id, 'to': user2_id},
         {'from': user2_id, 'to': user1_id}
-    ]}).sort({'timestamp': 1})
+    ]}).sort('timestamp', pymongo.ASCENDING)
 
+    result = list(result)
     for doc in result:
         del doc['_id']
 
-    return web.Response(status=200, text=json.dumps(doc))
+    return web.Response(status=200, text=json.dumps(result))
 
 # get chat_summary_list request handler
 # get the chat_sumary_list for a user
@@ -236,26 +242,33 @@ async def get_chat_summary_list(request):
     query = get_request_query(request)
     user_id = query['user_id'][0]
 
-    result = db_message.find()
+    result = db_chat.find({'$or': [
+        {'from': user_id},
+        {'to': user_id}
+    ]}).sort('timestamp', pymongo.ASCENDING)
 
-    # TODO
+    result = list(result)
+    for doc in result:
+        del doc['_id']
+
+    return web.Response(status=200, text=json.dumps(result))
 
 ########################### Request Handlers (POST) ###########################
 
 # post post request handler
 @routes.post('/post/post')
 async def post_post(request):
-    query = get_request_query(request)
+    # query = get_request_query(request)
 
     post = await request.json()
     post['pics_id'] = []
     post['answers_id'] = []
     # post['post_summary']['post_id'] = ''
-    post['post_summary']['timestamp_create'] = int(time.time())
+    post['post_summary']['timestamp_create'] = int(time.time() * 1000)
 
     if 'pics' in post:
         for p in post['pics']:
-            doc = {'img_b64': p}
+            doc = {'b64': p}
             with open('res', 'a+') as f:
                 f.write(p + '\n')
             db_pic.insert_one(doc)
@@ -303,9 +316,9 @@ async def post_profile_pic(request):
     user_info = db_user.find_one({'_id': ObjectId(user_id)})
     if 'pic_id' in user_info:
         db_pic.update_one({'_id': ObjectId(user_info['pic_id'])},
-            {'$set': {'img_b64': pic}})
+            {'$set': {'b64': pic}})
     else:
-        doc = {'img_b64': pic}
+        doc = {'b64': pic}
         db_pic.insert_one(doc)
         pic_id = str(doc['_id'])
         db_user.update_one({'_id': ObjectId(user_id)},
@@ -319,8 +332,28 @@ async def post_message(request):
     # query = get_request_query(request)
     # src_id, dst_id = query['from'][0], query['to'][0]
 
-    msg = await request.json()
+    msg = await request.json()    
+    msg['timestamp'] = int(time.time() * 1000)
+    
     db_message.insert_one(msg)
+    del msg['_id']
+
+    # doc = db_chat.find_one({'from': msg['from'], 'to': msg['to']})
+    # if doc is None:
+    #     doc = db_chat.find_one({'from': msg['to'], 'to': msg['from']})
+
+    # if doc is None:
+    #     db_chat.insert_one(msg)
+    # else:
+    #     msg['_id'] = doc['_id']
+    #     db_chat.replace_one({'_id': doc['_id']}, msg)
+
+    db_chat.replace_one({'$or': [
+        {'from': msg['from'], 'to': msg['to']},
+        {'from': msg['to'], 'to': msg['from']}
+        ]},
+        msg,
+        upsert=True)
 
     return web.Response(status=200, text='success (message sent)')
 
