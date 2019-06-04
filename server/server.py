@@ -21,13 +21,12 @@ db = mongo_client['db']
 
 db_user = db['user']
 db_tag = db['tag']
+db_keyword = db['keyword']
 db_post = db['post']
 db_answer = db['answer']
 db_pic = db['pic']
 db_message = db['message']
 db_chat = db['chat_summary']
-
-IP = '18.221.224.217'
 
 ########################### Helper Functions ###########################
 
@@ -42,6 +41,17 @@ def get_request_query(request):
     query = urllib.parse.urlparse(str(request.url)).query
     query = urllib.parse.parse_qs(query)
     return query
+
+def parse_email_address(s):
+    p = s.find('@')
+    if p == -1:
+        return None
+    q = s.find('.', p)
+    if q == -1:
+        return None
+    # if s[q:] != '.edu':
+    #     return None
+    return s[p + 1: q]
 
 def send_verification_email(user_info):
     from_addr = 'jsmith19960401@gmail.com'
@@ -78,6 +88,10 @@ async def get_register(request):
         return web.Response(text='Invalid Registration Request')
     user_info = json.loads(user_info)
 
+    user_info['institution'] = parse_email_address(user_info['email'])
+    if user_info['institution'] is None:
+        return web.Response(status=400, text='Invalid email address')
+
     # if an email address is already in db, check whether it is verified or not
     result = db_user.find_one({'email': user_info['email']})
     if result is not None:
@@ -88,6 +102,7 @@ async def get_register(request):
 
     user_info['verified'] = False
     user_info['verification_code'] = generate_rand_string(64)
+
     db_user.insert_one(user_info)
     db_user.update_one({'_id': user_info['_id']},
         {'$set': {'user_id': str(user_info['_id'])}})
@@ -115,7 +130,7 @@ async def get_verify(request):
 
     return web.Response(status=200, text='Account Verified')
 
-# log-in request handler
+# login request handler
 @routes.get('/login')
 async def get_login(request):
     query = get_request_query(request)
@@ -141,7 +156,7 @@ async def get_login(request):
 async def get_profile(request):
     query = get_request_query(request)
     email = None if ('email' not in query) else query['email'][0]
-    
+
     user_info = db_user.find_one({'email': email})
     if user_info is None:
         return web.Response(status=404, text='No Result Found (profile)')
@@ -155,25 +170,30 @@ async def get_profile(request):
 @routes.get('/get/post_summary_list')
 async def get_post_summary_list(request):
     query = get_request_query(request)
-    user_info = None if ('user_info' not in query) else query['user_info'][0]
-    tags = [] if ('tags' not in query) else json.loads(query['tags'])
+    user_id = query['user_id'][0]
+    tags = [] if ('tags' not in query) else json.loads(query['tags'][0])
+
+    inst = db_user.find_one({'_id': ObjectId(user_id)})['institution']
 
     result = []
     for tag in tags:
-        tmp = [ x for x in db_tag.find({'tag': tag}) ]
+        tmp = db_tag.find_one({'tag': tag})['post_ids']
         if not result:
             result = tmp
         else:
             result = interesection(result, tmp)
 
-    # TODO
-
     tmp = []
     for idx in result:
-        x = db_post.find_one({'_id': ObjectId(idx)})
+        x = db_post.find_one({'_id': ObjectId(idx),
+            'post_summary.user_info.institution': inst})
         del x['_id']
         tmp.append(x['post_summary'])
     result = tmp
+
+    if not tags:
+        result = [ x['post_summary'] for x in db_post.find(
+            {'post_summary.user_info.institution': inst}) ]
 
     return web.Response(status=200, text=json.dumps(result))
 
@@ -258,13 +278,12 @@ async def get_chat_summary_list(request):
 # post post request handler
 @routes.post('/post/post')
 async def post_post(request):
-    # query = get_request_query(request)
-
     post = await request.json()
-    post['pics_id'] = []
-    post['answers_id'] = []
-    # post['post_summary']['post_id'] = ''
+
+    post['pic_ids'] = []
+    post['answer_ids'] = []
     post['post_summary']['timestamp_create'] = int(time.time() * 1000)
+    post['post_summary']['timestamp_update'] = post['post_summary']['timestamp_create']
 
     if 'pics' in post:
         for p in post['pics']:
@@ -272,7 +291,7 @@ async def post_post(request):
             with open('res', 'a+') as f:
                 f.write(p + '\n')
             db_pic.insert_one(doc)
-            post['pics_id'].append(str(doc['_id']))
+            post['pic_ids'].append(str(doc['_id']))
         del post['pics']
 
     db_post.insert_one(post)
@@ -280,28 +299,49 @@ async def post_post(request):
     db_post.update_one({'_id': ObjectId(post_id)},
         {'$set': {'post_summary.post_id': post_id}})
 
+    post_summary = post['post_summary']
+
+    for tag in post_summary['tags']:
+        if db_tag.find_one({'tag': tag}) is None:
+            db_tag.insert_one({'tag': tag, 'post_ids': []})
+        db_tag.update_one({'tag': tag},
+            {'$push': {'post_ids': post_id}})
+
+    title = post_summary['title']
+    title = title.replace(',', '').replace('.', '').replace('?', '')
+    title = title.replace(':', '').replace(';', '').replace('\"', '').replace('\'', '')
+    title = title.replace('$', '').replace('%', '').replace('*', '')
+    keywords = (' '.join(title.split(' '))).split(' ')
+    for keyword in keywords:
+        if db_keyword.find_one({'keyword': keyword}) is None:
+            db_keyword.insert_one({'keyword': keyword, 'post_ids': []})
+        db_keyword.update_one({'keyword': keyword},
+            {'$push': {'post_ids': post_id}})
+
     return web.Response(status=200, text='success (post)')
 
 # post answer request handler
 @routes.post('/post/answer')
 async def post_answer(request):
-    query = get_request_query(request)
-
     answer = await request.json()
-    answer['pics_id'] = []
-    answer['timestamp_create'] = ''
+    answer['pic_ids'] = []
+    answer['timestamp_create'] = int(time.time() * 1000.0)
 
     if 'pics' in answer:
         for p in answer['pics']:
             doc = {'img64': p}
             db_pic.insert_one(doc)
-            answer['pics_id'].append(str(doc['_id']))
+            answer['pic_ids'].append(str(doc['_id']))
         del answer['pics']
 
     db_answer.insert_one(answer)
     answer_id = str(answer['_id'])
     db_post.update_one({'_id': ObjectId(answer_id)},
         {'$set': {'answer_id': answer_id}})
+
+    post_id = answer['post_id']
+    db_post.update_one({'_id': ObjectId(post_id)},
+        {'$push': {'answer_ids': answer_id}})
 
     return web.Response(status=200, text='success (answer)')
 
@@ -332,9 +372,9 @@ async def post_message(request):
     # query = get_request_query(request)
     # src_id, dst_id = query['from'][0], query['to'][0]
 
-    msg = await request.json()    
+    msg = await request.json()
     msg['timestamp'] = int(time.time() * 1000)
-    
+
     db_message.insert_one(msg)
     del msg['_id']
 
