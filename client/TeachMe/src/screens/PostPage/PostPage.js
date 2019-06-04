@@ -26,15 +26,15 @@ class PostPage extends Component {
 
     _post() {
         post_content = {
-            post_summary = {
-                user_info = {
-                    user_id: this.state.user_id,
-                },
-                title: this.state.title,
-                tags: this.state.tags,
-            },
-            content: this.state.content,
-            pics: this.state.pics,
+            // post_summary = {
+            //     user_info = {
+            //         user_id: this.state.user_id,
+            //     },
+            //     title: this.state.title,
+            //     tags: this.state.tags,
+            // },
+            // content: this.state.content,
+            // pics: this.state.pics,
         };
     
         axios.post('http://18.221.224.217:8080/post/post', {params:{post_content}})
