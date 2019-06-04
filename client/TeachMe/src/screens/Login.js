@@ -35,7 +35,6 @@ export default class Login extends Component {
           else if (res.status == 200){
             // login succeeded
             this.navigation.navigate('Home', {email: this.state.email});
-            this.props.
           }
       })
       .catch(error => {
