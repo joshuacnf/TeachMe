@@ -60,7 +60,7 @@ def send_verification_email(user_info):
     msg['From'] = 'TeachMe Registration' + ' <{}>'.format(from_addr)
     msg['To'] = to_addr
     msg['Subject'] = 'Verification Email from TeachMe'
-    body = 'http://0.0.0.0:8080/verify?code={}&id={}'.format(
+    body = 'http://18.221.224.217:8080/verify?code={}&id={}'.format(
         user_info['verification_code'], str(user_info['_id']))
     msg.attach(MIMEText(body))
 
@@ -201,6 +201,8 @@ async def get_post_summary_list(request):
 @routes.get('/get/post')
 async def get_post(request):
     query = get_request_query(request)
+    print(str(request.url))
+    print(query)
     post_id = query['post_id'][0]
 
     result = db_post.find_one({'_id': ObjectId(post_id)})
@@ -221,7 +223,10 @@ async def get_answer(request):
 
     if result is None:
         return web.Response(status=404, text='No Result Found')
+    
+    del result['_id']
 
+    print(json.dumps(result))
     return web.Response(status=200, text=json.dumps(result))
 
 # get pic request handler
@@ -336,7 +341,7 @@ async def post_answer(request):
 
     db_answer.insert_one(answer)
     answer_id = str(answer['_id'])
-    db_post.update_one({'_id': ObjectId(answer_id)},
+    db_answer.update_one({'_id': ObjectId(answer_id)},
         {'$set': {'answer_id': answer_id}})
 
     post_id = answer['post_id']

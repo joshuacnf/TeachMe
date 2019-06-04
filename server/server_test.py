@@ -8,7 +8,7 @@ import os
 def generate_rand_string(len):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=len))
 
-url_prefix = 'http://0.0.0.0:8080'
+url_prefix = 'http://:8080'
 
 user_info1 = {
     'email': '',
