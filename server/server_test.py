@@ -3,6 +3,7 @@ import requests
 import base64
 import random
 import string
+import os
 
 def generate_rand_string(len):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=len))
@@ -42,6 +43,18 @@ post1 = {
     'pics': []
 }
 
+post2_summary = {
+    'user_info': user_info1,
+    'title': 'Is Razor good at countering Monkey King in midlane?',
+    'tags': ['DOTA2']
+}
+
+post2 = {
+    'post_summary': post2_summary,
+    'content': 'I got destroyed by MK in midlane; I was wondering if Razor is a good option against MK',
+    'pics': []
+}
+
 def get_register_test(user_info):
     url = url_prefix + '/register?user_info={}'.format(json.dumps(user_info))
     res = requests.get(url=url)
@@ -58,13 +71,16 @@ def get_profile_test(user_info):
     print(res.status_code, res.text)
     return json.loads(res.text)
 
-def get_pic_test(pic_id):
+def get_pic_test(pic_id, target_pic):
     url = url_prefix + '/get/pic?pic_id={}'.format(pic_id)
     res = requests.get(url=url)
     print(res.status_code)
 
     with open('tmp.jpg', 'wb') as f:
         f.write(base64.decodestring(res.text.encode()))
+    
+    os.system('diff tmp.jpg {}'.format(target_pic))
+    os.system('rm tmp.jpg')
 
 def get_chat_summary_list_test(user_id):
     url = url_prefix + '/get/chat_summary_list?user_id={}'.format(user_id)
@@ -160,6 +176,7 @@ def main():
     print('=================== Test 1 =====================')
     get_register_test(user_info1)
     get_register_test(user_info2)
+    get_register_test(user_info3)
 
     print('=================== Test 2 =====================')
     get_login_test(user_info1)
@@ -173,7 +190,7 @@ def main():
     print('=================== Test 5.1 =====================')
     tmp = get_profile_test(user_info1)
     print('=================== Test 5.2 =====================')
-    get_pic_test(tmp['pic_id'])
+    get_pic_test(tmp['pic_id'], 'test_profile.jpg')
 
     print('=================== Test 6.1 =====================')
     user_info = get_profile_test(user_info1)
@@ -190,12 +207,26 @@ def main():
             content=generate_rand_string(100))
     for post_summary in tmp:
         get_post_test(post_summary['post_id'])
-    
     print('=================== Test 6.3 =====================')
-    u = get_profile_test(user_info3)['user_id']
+    user_info = get_profile_test(user_info3)
+    u = user_info['user_id']
+    tmp = get_post_summary_list_test(user_id=u)
+    post_post_test(user_info=user_info, title=post2_summary['title'],
+        tags=post2_summary['tags'], content=post2['content'],
+        file_name='test_post_pic.jpg')
     tmp = get_post_summary_list_test(user_id=u)
 
     print('=================== Test 7.1 =====================')
+    user_info = get_profile_test(user_info1)
+    pic_id = user_info['pic_id']
+    get_pic_test(pic_id, 'test_profile.jpg')
+    print('=================== Test 7.1 =====================')
+    post_id = get_post_summary_list_test(user_info['user_id'])[0]['post_id']
+    post = get_post_test(post_id)
+    pic_id = post['pic_ids'][0]
+    get_pic_test(pic_id, 'test_post_pic.jpg')
+
+    print('=================== Test 8.1 =====================')
     u = get_profile_test(user_info1)
     v = get_profile_test(user_info2)
     u, v = u['user_id'], v['user_id']
@@ -203,7 +234,7 @@ def main():
     post_message_test(v, u, 'bbbbdqnb')
     post_message_test(u, v, 'ok')
     post_message_test(u, v, 'bdqnb')
-    print('=================== Test 7.2 =====================')
+    print('=================== Test 8.2 =====================')
     get_chat_summary_list_test(u)
     get_chat_test(u, v)
 
