@@ -10,18 +10,6 @@ import {SelectTagsPage} from '../screens/SelectTagsPage/index';
 import {ProfilePage} from '../screens/ProfilePage/index';
 
 const AppNavigator = createStackNavigator({
-    Profile:{
-        screen:ProfilePage
-    },
-    PostPage:{
-        screen: PostPage
-    },
-    SignUp: { 
-        screen: Register 
-    },
-    Login: { 
-        screen: Login 
-    },
     Home: { 
         screen: Home 
     },
@@ -37,7 +25,18 @@ const AppNavigator = createStackNavigator({
     SelectTagsPage:{
         screen:SelectTagsPage
     },
-    
+    Profile:{
+        screen:ProfilePage
+    },
+    PostPage:{
+        screen: PostPage
+    },
+    SignUp: { 
+        screen: Register 
+    },
+    Login: { 
+        screen: Login 
+    },
 });
 
 export default createAppContainer(AppNavigator);
