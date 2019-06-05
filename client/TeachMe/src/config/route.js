@@ -1,4 +1,5 @@
-import { createBottomTabNavigator,createStackNavigator, createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator, createAppContainer,
+    createSwitchNavigator } from 'react-navigation';
 
 import Register from '../screens/Register'
 import Login from '../screens/Login'
@@ -8,37 +9,53 @@ import PostPage from '../screens/PostPage'
 import AnswerPage from "../screens/AnswerPage"
 import Post from "../screens/Post"
 
-const AppNavigator = createStackNavigator({
-    Login: { 
-        screen: Login 
+const bottomTabNavigator = createBottomTabNavigator({
+    Home: {
+        screen: Home
     },
-    SignUp: { 
-        screen: Register 
+    NewPost: {
+        screen: PostPage
     },
-    ScreenBottomTab: 
-        createBottomTabNavigator({
-            Home: { 
-                screen: Home 
-            },
-            NewPost: {
-                screen: PostPage
-            },
-            Profile:{
-                screen:ProfilePage
-            },
-        // Instant message
-        }),
-    ProfilePage: {
-        screen: ProfilePage,
-    },
-    AnswerPage: {
-        screen: AnswerPage,
-    },
-    Post: {
-        screen: Post,
-    },
-}, {
-    headerMode: 'none'
+    ProfilePage: createSwitchNavigator(
+        {
+            ProfilePage: ProfilePage,
+            Login: Login
+        }
+    ),
 });
+
+const AppNavigator = createStackNavigator({
+    Login: createSwitchNavigator(
+        {
+            Login: Login,
+            BottomTab: bottomTabNavigator
+        },
+    ),
+    SignUp: {
+        screen: Register
+    },
+})
+
+// const AppNavigator = createStackNavigator({
+//     Login: {
+//         screen: Login
+//     },
+//     SignUp: {
+//         screen: Register
+//     },
+//     ScreenBottomTab: bottomTabNavigator,
+//     ProfilePage: {
+//         screen: ProfilePage,
+//     },
+//     AnswerPage: {
+//         screen: AnswerPage,
+//     },
+//     Post: {
+//         screen: Post,
+//     },
+// }, {
+//     headerMode: 'none'
+// });
+
 
 export default createAppContainer(AppNavigator);
