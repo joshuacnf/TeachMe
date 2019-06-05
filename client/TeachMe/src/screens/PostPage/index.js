@@ -67,7 +67,7 @@ class PostPage extends Component {
     }
 
     _selectTags = () => {
-        this.navigation.navigate('SelectTagsPage');
+        this.navigation.navigate('SelectTagsScreen');
     }
 
     _deleteTag = (name) => {

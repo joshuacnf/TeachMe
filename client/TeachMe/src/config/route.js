@@ -9,7 +9,7 @@ import ProfilePage from '../screens/ProfilePage'
 import Home from '../screens/Home'
 import PostPage from '../screens/PostPage'
 import AnswerPage from "../screens/AnswerPage"
-import SelectTagsPage from "../screens/SelectTagsPage"
+import SelectTagsPage from "../screens/SelectTagsPage/SelectTagsPage"
 import Post from "../screens/Post"
 
 const HomeScreenStack = createStackNavigator(
@@ -29,8 +29,7 @@ const HomeScreenStack = createStackNavigator(
 const AddPostStack = createStackNavigator(
   {
     AddPostScreen: PostPage,
-    // SelectTagsScreen: SelectTagsPage,
-    HomeScreen: Home,
+    SelectTagsScreen: SelectTagsPage,    
   },
   {
     navigationOptions: {
