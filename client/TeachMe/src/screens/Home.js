@@ -10,11 +10,11 @@ import axios from 'axios';
 
 class Home extends Component {
     static navigationOptions = {
-      title: 'Home',
-      headerLeft: null,
-      tabBarIcon: ({ focused }) => {
-          return <Icon name="home" size={20} color={focused ? '#2196F3' : '#808080'}/>
-        },
+      title: 'Home',      
+      // headerLeft: null,
+      // tabBarIcon: ({ focused }) => {
+      //     return <Icon name="home" size={20} color={focused ? '#2196F3' : '#808080'}/>
+      //   },
     }
 
     componentWillMount() {
@@ -41,7 +41,7 @@ class Home extends Component {
     }
 
     showPost = post_id => {
-        this.navigation.navigate('Post', {post_id: post_id});
+        this.navigation.navigate('PostScreen', {post_id: post_id});
     }
 
     // styles = StyleSheet.create({

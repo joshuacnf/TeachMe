@@ -7,8 +7,7 @@ import axios from 'axios';
 
 export default class Post extends Component {
     static navigationOptions = {
-        title: "Post",
-        headerLeft: null,
+        title: "Post",        
     }
 
     componentWillMount() {
@@ -79,7 +78,7 @@ export default class Post extends Component {
                 <FlatList
                     data={this.state.answers}
                     renderItem={({item}) => this._renderAnswer(item)}
-                    keyExtractor={(item, index) => item}
+                    keyExtractor={item => item.answer_id}
                 />
                 <Button
                     onPress={() => this.navigation.navigate('AnswerPage',

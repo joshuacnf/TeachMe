@@ -10,9 +10,9 @@ import Icon from 'react-native-vector-icons/SimpleLineIcons';
 class PostPage extends Component {
     static navigationOptions = {
         title: "PostPage",
-        tabBarIcon: ({ focused }) => {
-            return <Icon name="plus" size={20} color={focused ? '#2196F3' : '#808080'}/>
-        },
+        // tabBarIcon: ({ focused }) => {
+        //     return <Icon name="plus" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        // },
     };
 
     constructor(props){

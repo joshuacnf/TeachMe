@@ -1,5 +1,7 @@
 import { createBottomTabNavigator, createStackNavigator, createAppContainer,
     createSwitchNavigator } from 'react-navigation';
+import React, {Component} from 'react';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 import Register from '../screens/Register'
 import Login from '../screens/Login'
@@ -7,34 +9,108 @@ import ProfilePage from '../screens/ProfilePage'
 import Home from '../screens/Home'
 import PostPage from '../screens/PostPage'
 import AnswerPage from "../screens/AnswerPage"
+import SelectTagsPage from "../screens/SelectTagsPage"
 import Post from "../screens/Post"
 
-const bottomTabNavigator = createBottomTabNavigator({
-    Home: {
-        screen: Home
-    },
-    NewPost: {
-        screen: PostPage
-    },
-    ProfilePage: createSwitchNavigator(
-        {
-            ProfilePage: ProfilePage,
-            Login: Login
-        }
-    ),
+const HomeScreenStack = createStackNavigator(
+  {
+    HomeScreen: Home,
+    PostScreen: Post,
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: ({ focused }) => {
+        return <Icon name="home" size={20} color={focused ? '#2196F3' : '#808080'}/>
+      }
+    }
+  }
+)
+
+const AddPostStack = createStackNavigator(
+  {
+    AddPostScreen: PostPage,
+    // SelectTagsScreen: SelectTagsPage,
+    HomeScreen: Home,
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: ({ focused }) => {
+        return <Icon name="plus" size={20} color={focused ? '#2196F3' : '#808080'}/>
+      },
+    }
+  }
+)
+
+const ProfileScreenStack = createStackNavigator(
+  {
+    ProfileScreen: ProfilePage,
+    LoginScreen: Login,
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: ({ focused }) => {
+        return <Icon name="user" size={20} color={focused ? '#2196F3' : '#808080'}/>
+      }
+    }
+  }
+)
+
+const AppSwitch = createBottomTabNavigator({
+    HomeScreen: HomeScreenStack,
+    AddPostScreen: AddPostStack,
+    ProfileScreen: ProfileScreenStack,
 });
 
-const AppNavigator = createStackNavigator({
-    Login: createSwitchNavigator(
-        {
-            Login: Login,
-            BottomTab: bottomTabNavigator
-        },
-    ),
-    SignUp: {
-        screen: Register
-    },
-})
+const AuthStack = createStackNavigator({
+  SignIn: Login,
+  SignUp: Register
+});
+
+export default createAppContainer(createSwitchNavigator(
+  {
+    Auth: AuthStack,
+    BottomTab: AppSwitch,
+  },
+  {
+    initialRouteName: 'Auth',
+  }
+));
+
+
+// const bottomTabNavigator = createBottomTabNavigator({
+//     Home: createStackNavigator({
+//             Home: {
+//                 screen: Home,
+//             },
+//             Post: {
+//                 screen: Post,
+//             }
+//         }),
+//     // Home: Home,
+//     NewPost: {
+//         screen: PostPage
+//     },
+//     // ProfilePage: {
+//     //     screen: createSwitchNavigator(
+//     //     {
+//     //         ProfilePage: ProfilePage,
+//     //         Login: Login
+//     //     }
+//     // )},
+//     ProfilePage: {
+//         screen: ProfilePage
+//     }
+// });
+
+// const AppNavigator = createStackNavigator({
+//     Login: createSwitchNavigator(
+//         {
+//             Login: Login,
+//             BottomTab: bottomTabNavigator
+//         },
+//     ),
+//     SignUp: Register
+// })
 
 // const AppNavigator = createStackNavigator({
 //     Login: {
@@ -58,4 +134,4 @@ const AppNavigator = createStackNavigator({
 // });
 
 
-export default createAppContainer(AppNavigator);
+// export default createAppContainer(AppNavigator);

@@ -13,10 +13,10 @@ import { connect } from "react-redux";
 class ProfilePage extends Component{
     static navigationOptions = {
         title: 'User',
-        headerLeft: null,
-        tabBarIcon: ({ focused }) => {
-            return <Icon name="user" size={20} color={focused ? '#2196F3' : '#808080'}/>
-        },
+        // headerLeft: null,
+        // tabBarIcon: ({ focused }) => {
+            // return <Icon name="user" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        // },
     }
 
     constructor(props){
