@@ -3,11 +3,12 @@ import { View, Button, Text, FlatList, TouchableOpacity } from 'react-native';
 import { SearchBar, List, ListItem, Avatar } from "react-native-elements"
 import { Card } from '@shoutem/ui/components/Card'
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import { connect } from "react-redux";
 
 import styles from './style';
 import axios from 'axios';
 
-export default class Home extends Component {
+class Home extends Component {
     static navigationOptions = {
       title: 'Home',
       tabBarIcon: ({ focused }) => {
@@ -17,7 +18,10 @@ export default class Home extends Component {
     }
 
     componentWillMount() {
-        axios.get('http://18.221.224.217:8080/get/post_summary_list', {params:{user_id: "5cf618e0f3295c559afd3281"}})
+        axios.get('http://18.221.224.217:8080/get/post_summary_list', {
+            params: {
+                user_id: this.props.userInfo.user_id
+            }})
             .then(res => {
                 this.setState({data: res.data});
             })
@@ -119,3 +123,9 @@ export default class Home extends Component {
       return time;
     }
 }
+
+function mapStateToProps(state) {
+    return { userInfo: state.reducers.userInfo };
+}
+
+export default connect(mapStateToProps)(Home);
