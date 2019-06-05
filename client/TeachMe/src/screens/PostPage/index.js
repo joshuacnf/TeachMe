@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View,Text,TextInput,Button,TouchableOpacity,ScrollView} from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import {styles} from './styles';
-import TagButton from '../Component/TagButton';
+import TagButton from '../../components/TagButton';
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory';
 import {InputAccessoryView} from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
@@ -47,7 +47,6 @@ class PostPage extends Component {
     
         axios.post('http://18.221.224.217:8080/post/post', {params:{post_content}})
             .then(res => {
-                console.log(res);
                 if (res.status == 200){
                     // post succeeded
                     console.log(response)

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View,Text,TextInput,Button,TouchableOpacity} from 'react-native';
 import {styles} from './styles';
 import axios from 'axios';
+import { connect } from "react-redux";
 
 class AnswerPage extends Component{
     static navigationOptions = {
@@ -9,11 +10,13 @@ class AnswerPage extends Component{
     };
 
     constructor(props){
-        super(props);
+        super();
+        console.log("props~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        console.log(props);
         this.navigation = props.navigation;
         this.state = {
-            user_id:'',
-            post_id:'',
+            user_id: props.userInfo.user_id,
+            post_id: props.navigation.state.params.post_id,
             content:'',
             pics:[],
             pics_id:[],
@@ -27,13 +30,11 @@ class AnswerPage extends Component{
             content: this.state.content,
             pics: this.state.pics,
         };
-    
-        axios.post('http://18.221.224.217:8080/post/answer', {params:{answer_content}})
+        axios.post('http://18.221.224.217:8080/post/answer', answer_content)
             .then(res => {
-                console.log(res);
                 if (res.status == 200){
-                    // answer succeeded
-                    console.log(response)
+                    console.log("answer success")
+                    this.navigation.goBack();
                 }
             })
             .catch(error => {
@@ -48,7 +49,8 @@ class AnswerPage extends Component{
                     style={styles.content}
                     placeholder="Please enter your answer here...."
                     multiline={true}
-                    onChangeText={(text) => this.setState({text})}
+                    onChangeText={(content) => this.setState({content})}
+                    value={this.state.content}
                 />
                 <View style={{flexDirection:'row-reverse'}}>
                     <TouchableOpacity
@@ -63,4 +65,8 @@ class AnswerPage extends Component{
     }
 }
 
-export default AnswerPage;
+function mapStateToProps(state) {
+    return { userInfo: state.reducers.userInfo };
+}
+
+export default connect(mapStateToProps)(AnswerPage);

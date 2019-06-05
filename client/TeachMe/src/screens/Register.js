@@ -4,7 +4,7 @@ import styles from './style';
 import axios from 'axios';
 import { TextInput } from 'react-native-gesture-handler';
 
-export default class Login extends Component {
+export default class Register extends Component {
     static navigationOptions = {
         title: "Post"
     };

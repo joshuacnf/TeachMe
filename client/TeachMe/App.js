@@ -8,10 +8,6 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-import {PostPage} from './src/screens/PostPage/index';
-import {AnswerPage} from './src/screens/AnswerPage/index';
-import { Provider } from 'react-native'
-import store from './store'
 
 import Route from "./src/config/route"
 
@@ -25,15 +21,6 @@ const instructions = Platform.select({
 type Props = {};
 export default class App extends Component<Props> {
   render() {
-   /* return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-        <Text style={styles.instructions}>hahahha</Text>
-        <Text style={styles.instructions}>hello</Text>
-      </View>
-    );*/
     return (
         <Route />
     );
