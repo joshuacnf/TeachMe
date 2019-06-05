@@ -15,8 +15,14 @@ import ImagePicker from 'react-native-image-picker';
 
 
 export default class ProfilePage extends Component{
+
+    static navigationOptions = {
+      title: "Profile"
+    };
+
     constructor(props){
         super(props);
+        this.navigation = props.navigation;
         this.state = {
             userName:'Chengyu Wang',
             imageSource:null
@@ -62,6 +68,10 @@ export default class ProfilePage extends Component{
         });
     }
 
+    startChat(){
+      this.navigation.navigate('ChatPage');
+    }
+
 
 
     render(){
@@ -84,7 +94,10 @@ export default class ProfilePage extends Component{
                     
                     <Text style={styles.userName}>Chengyu Wang</Text>
 
-                    <TouchableOpacity style={styles.sendMessage}> 
+                    <TouchableOpacity 
+                      style={styles.sendMessage}
+                      onPress={() => this.startChat()}
+                    > 
                         <Text style={{color:'white',fontSize:20}}>Send Message</Text>
                     </TouchableOpacity>
                 </View>

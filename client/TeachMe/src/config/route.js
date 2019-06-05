@@ -8,17 +8,24 @@ import {PostPage} from '../screens/PostPage/index';
 import {AnswerPage} from '../screens/AnswerPage/index';
 import {SelectTagsPage} from '../screens/SelectTagsPage/index';
 import {ProfilePage} from '../screens/ProfilePage/index';
+import {ChatPage} from '../screens/ChatPage/index';
+
 
 const AppNavigator = createStackNavigator({
+    
     Profile:{
         screen:ProfilePage
     },
-    PostPage:{
-        screen: PostPage
+    ChatPage:{
+        screen:ChatPage
     },
     SignUp: { 
         screen: Register 
     },
+    PostPage:{
+        screen: PostPage
+    },
+    
     Login: { 
         screen: Login 
     },
