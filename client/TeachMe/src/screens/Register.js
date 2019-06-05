@@ -4,7 +4,7 @@ import styles from './style';
 import axios from 'axios';
 import { TextInput } from 'react-native-gesture-handler';
 
-export default class Login extends Component {
+export default class Register extends Component {
     static navigationOptions = {
         title: "Post"
     };
@@ -58,6 +58,7 @@ export default class Login extends Component {
                     value={this.state.text}
                     placeholder="Email (@edu)"
                     style={styles.input}
+                    autoCapitalize = 'none'
                 />
                 <TextInput
                     onChangeText={(password) => this.setState({password})}
@@ -69,12 +70,6 @@ export default class Login extends Component {
                     title="Sign Up" 
                     onPress={() => this.register()} 
                     style={styles.button}
-                />
-                {/* temporary */}
-                <Button 
-                    title="Login" 
-                    onPress={() => this.navigation.navigate('Login')} 
-                    style={styles.buttonText}
                 />
             </View>
         );

@@ -7,7 +7,7 @@ import axios from 'axios';
 
 export default class Post extends Component {
     static navigationOptions = {
-        title: "Post"
+        title: "Post",        
     }
 
     componentWillMount() {
@@ -15,7 +15,7 @@ export default class Post extends Component {
             .then(res => {
                 this.setState({post: res.data});
                 for (const answer_id of res.data.answer_ids){
-                    console.log(i);
+                    console.log(answer_id);
                     axios.get('http://18.221.224.217:8080/get/answer', {params: {answer_id: answer_id}})
                     .then(res => {
                         var joined = this.state.answers.concat(res.data);
@@ -36,6 +36,7 @@ export default class Post extends Component {
     }
 
     _renderAnswer = answer =>{
+        console.log("~~~~~~~~~~~~~~~~~~answer")
         return (
             <Card>
                 <Text>
@@ -77,19 +78,14 @@ export default class Post extends Component {
                 <FlatList
                     data={this.state.answers}
                     renderItem={({item}) => this._renderAnswer(item)}
-                    keyExtractor={(item, index) => item}
+                    keyExtractor={item => item.answer_id}
                 />
                 <Button
-                    onPress={() => this.navigation.navigate('AnswerPage')} 
+                    onPress={() => this.navigation.navigate('AnswerPage',
+                    {post_id: this.state.post.post_summary.post_id})} 
                     title="add your answer" 
                     style={styles.buttonText}
                 />
-                {/* <TouchableHighlight 
-                    style={styles.addButton}
-                    onPress = {this._addAnswer}
-                >
-                    <Icon name="plus" size={30}/>
-                </TouchableHighlight> */}
                 </View>
             : <View/>}
             </View>

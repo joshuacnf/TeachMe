@@ -7,7 +7,8 @@ import * as actionCreators from '../redux/actions';
 
 class Login extends Component {
   static navigationOptions = {
-    title: 'Login'
+    title: 'Login',
+    headerLeft: null
   }
 
   constructor(props) {
@@ -40,7 +41,7 @@ class Login extends Component {
         else if (res.status == 200){
           // login succeeded
           this.changeReduxStore(res.data);
-          this.navigation.navigate('ScreenBottomTab', {email: this.state.email});
+          this.navigation.navigate('BottomTab', {email: this.state.email});
         }
     })
     .catch(error => {
@@ -64,6 +65,7 @@ class Login extends Component {
           </View>
           <View style={styles.formContainer}>
           <TextInput
+            autoCapitalize = 'none'
             style={styles.input}
             onChangeText={(email) => this.setState({email})}
             value={this.state.email}
