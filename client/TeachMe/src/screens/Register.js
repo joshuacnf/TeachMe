@@ -58,6 +58,7 @@ export default class Register extends Component {
                     value={this.state.text}
                     placeholder="Email (@edu)"
                     style={styles.input}
+                    autoCapitalize = 'none'
                 />
                 <TextInput
                     onChangeText={(password) => this.setState({password})}

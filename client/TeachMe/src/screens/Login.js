@@ -65,6 +65,7 @@ class Login extends Component {
           </View>
           <View style={styles.formContainer}>
           <TextInput
+            autoCapitalize = 'none'
             style={styles.input}
             onChangeText={(email) => this.setState({email})}
             value={this.state.email}
