@@ -21,10 +21,15 @@ class ProfilePage extends Component{
 
     constructor(props){
         super(props);
+        this.navigation = props.navigation;
         this.state = {
             imageSource:null,
             userInfo: this.props.userInfo,
         }
+    }
+
+    startChat(){
+        this.navigation.navigate('ChatPage');
     }
 
     selectPhotoTapped() {
@@ -83,7 +88,10 @@ class ProfilePage extends Component{
                     
                     <Text style={styles.userName}>{this.props.userInfo.first_name+" "+this.props.userInfo.last_name}</Text>
 
-                    <TouchableOpacity style={styles.sendMessage}> 
+                    <TouchableOpacity 
+                        style={styles.sendMessage}
+                        onPress={() => this.startChat()}
+                    > 
                         <Text style={{color:'white',fontSize:20}}>Send Message</Text>
                     </TouchableOpacity>
                 </View>

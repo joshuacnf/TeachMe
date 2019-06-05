@@ -11,6 +11,7 @@ import PostPage from '../screens/PostPage'
 import AnswerPage from "../screens/AnswerPage"
 import SelectTagsPage from "../screens/SelectTagsPage/SelectTagsPage"
 import Post from "../screens/Post"
+import ChatPage from '../screens/ChatPage/index';
 
 const HomeScreenStack = createStackNavigator(
   {
