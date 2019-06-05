@@ -7,7 +7,7 @@ import Post from '../screens/Post';
 import {PostPage} from '../screens/PostPage/index';
 import {AnswerPage} from '../screens/AnswerPage/index';
 import {SelectTagsPage} from '../screens/SelectTagsPage/index';
-import {ProfilePage} from '../screens/ProfilePage/index';
+import ProfilePage from '../screens/ProfilePage';
 import ScreenBottomTab from '../screens/ScreenBottomTab';
 
 const AppNavigator = createStackNavigator({

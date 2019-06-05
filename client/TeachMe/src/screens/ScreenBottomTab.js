@@ -1,9 +1,8 @@
-import React from 'react';
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 
 import Home from '../screens/Home';
 import {PostPage} from '../screens/PostPage/index';
-import {ProfilePage} from '../screens/ProfilePage/index';
+import ProfilePage from '../screens/ProfilePage';
 
 const TabNavigator = createBottomTabNavigator({
     Home: { 

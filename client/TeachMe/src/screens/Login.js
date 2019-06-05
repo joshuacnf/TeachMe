@@ -1,20 +1,26 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actionCreators from '../redux/actions';
 
-export default class Login extends Component {
+class Login extends Component {
   static navigationOptions = {
     title: 'Login'
   }
 
   constructor(props) {
-      super(props);
+      super();
       this.navigation = props.navigation;
       this.state = {
-          email: '',
-          password: '',
+          email: props.userInfo.email,
+          password: props.userInfo.password,
       }
   }
+  changeReduxStore(userInfo) {
+        this.props.setUserInfo(userInfo);
+    };
 
   login() {
     userInfo = {
@@ -29,9 +35,11 @@ export default class Login extends Component {
         if(res.status == 404){
           // login failed
           this.setState({email:'', password:''})
+          //  add error message to user
         }
         else if (res.status == 200){
           // login succeeded
+          this.changeReduxStore(res.data);
           this.navigation.navigate('ScreenBottomTab', {email: this.state.email});
         }
     })
@@ -56,17 +64,16 @@ export default class Login extends Component {
           </View>
           <View style={styles.formContainer}>
           <TextInput
-            placeholder="@edu email"
-            placeholderTextColor='rgba(255,255,255,0.7)'
             style={styles.input}
             onChangeText={(email) => this.setState({email})}
+            value={this.state.email}
           />
           <TextInput
-            placeholder="password"
-            placeholderTextColor='rgba(255,255,255,0.7)'
             secureTextEntry
             style={styles.input}
             onChangeText={(password) => this.setState({password})}
+            value={this.state.password}
+            secureTextEntry={true}
           />
           <TouchableOpacity 
             style={styles.buttonContainer} 
@@ -86,7 +93,15 @@ export default class Login extends Component {
   }
 }
 
+function mapStateToProps(state) {
+    return { userInfo: state.reducers.userInfo };
+}
 
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(actionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
 const styles = StyleSheet.create({
   container: {
