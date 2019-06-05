@@ -87,7 +87,7 @@ async def get_register(request):
     if user_info is None:
         return web.Response(text='Invalid Registration Request')
     user_info = json.loads(user_info)
-
+    
     user_info['institution'] = parse_email_address(user_info['email'])
     if user_info['institution'] is None:
         return web.Response(status=400, text='Invalid email address')
@@ -102,6 +102,7 @@ async def get_register(request):
 
     user_info['verified'] = False
     user_info['verification_code'] = generate_rand_string(64)
+    user_info['pic_id'] = ''
 
     db_user.insert_one(user_info)
     db_user.update_one({'_id': user_info['_id']},
@@ -149,7 +150,9 @@ async def get_login(request):
     if result is None:
         return web.Response(status=404, text='Login Failed')
 
-    return web.Response(status=200, text='Login Succeeded')
+    del result['_id']
+    del result['password']
+    return web.Response(status=200, text=json.dumps(result))
 
 # get profile request handler
 @routes.get('/get/profile')
@@ -272,10 +275,19 @@ async def get_chat_summary_list(request):
         {'to': user_id}
     ]}).sort('timestamp', pymongo.ASCENDING)
 
-    result = list(result)
-    for doc in result:
+    tmp = []
+    result = list(result)    
+    for doc in result:        
         del doc['_id']
+        contact_id = doc['from'] if doc['to'] == user_id else doc['to']
+        contact_info = db_user.find_one({'_id': ObjectId(contact_id)})
+        del contact_info['_id']
+        del contact_info['password']
+        tmp.append({'contact_info': contact_info,
+                    'message': doc})
+    result = tmp
 
+    print(json.dumps(result, indent=2))
     return web.Response(status=200, text=json.dumps(result))
 
 ########################### Request Handlers (POST) ###########################
