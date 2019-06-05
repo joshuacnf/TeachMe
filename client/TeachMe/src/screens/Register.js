@@ -6,7 +6,7 @@ import { TextInput } from 'react-native-gesture-handler';
 
 export default class Register extends Component {
     static navigationOptions = {
-        title: "Post"
+        title: "Register"
     };
   
     constructor(props) {
