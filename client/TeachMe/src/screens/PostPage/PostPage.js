@@ -5,11 +5,15 @@ import {styles} from './styles';
 import TagButton from './TagButton';
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory';
 import {InputAccessoryView} from 'react-native';
-
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 class PostPage extends Component {
     static navigationOptions = {
-        title: "PostPage"
+        title: "PostPage",
+        tabBarIcon: ({ focused }) => {
+            focused ? icon_color = "while" : "grey"; 
+            return <Icon name="plus" size={20} color={icon_color}/>
+          },
     };
 
     constructor(props){
@@ -17,9 +21,42 @@ class PostPage extends Component {
         this.navigation = props.navigation;
         this.state = {
             title:'',
+            user_id: '',
             tags:[],
-            content:''
-        }
+            content:'',
+            pics: [],
+        };
+    }
+
+    _post() {
+        post_content = {
+            // post_summary = {
+            //     user_info = {
+            //         user_id: this.state.user_id,
+            //     },
+            //     title: this.state.title,
+            //     tags: this.state.tags,
+            // },
+            // content: this.state.content,
+            // pics: this.state.pics,
+            user_id: this.state.user_id,
+            title: this.state.title,
+            tags: this.state.tags,
+            content: this.state.content,
+            pics: this.state.pics,
+        };
+    
+        axios.post('http://18.221.224.217:8080/post/post', {params:{post_content}})
+            .then(res => {
+                console.log(res);
+                if (res.status == 200){
+                    // post succeeded
+                    console.log(response)
+                }
+            })
+            .catch(error => {
+                console.log(error.response)
+            });
     }
 
     componentWillReceiveProps(nextProps){
@@ -132,7 +169,10 @@ class PostPage extends Component {
                 </View>
 
                 <View style={{flex:1,justifyContent:'flex-end',marginBottom:5}}>
-                    <TouchableOpacity style={styles.uploadBtn}> 
+                    <TouchableOpacity
+                        style={styles.uploadBtn}
+                        onPress={() => this._post()}
+                    > 
                         <Text style={{color:'white',fontSize:20}}>Upload</Text>
                     </TouchableOpacity>
                 </View>

@@ -10,6 +10,8 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import {PostPage} from './src/screens/PostPage/index';
 import {AnswerPage} from './src/screens/AnswerPage/index';
+import { Provider } from 'react-native'
+import store from './store'
 
 import Route from "./src/config/route"
 

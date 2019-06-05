@@ -1,69 +1,46 @@
 import React, {Component} from 'react';
 import { View, Button, Text, FlatList, TouchableOpacity } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { Card } from '@shoutem/ui'
+import { Card } from '@shoutem/ui/components/Card'
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 import styles from './style';
 import axios from 'axios';
 
-const posts = [
-    {
-        title: '1+1 = ?',
-        details: '',
-        author: 'Amy',
-        time: Date.now(),
-        postId: 1,
-    },
-    {
-        title: '1+1 = ?',
-        details: '',
-        author: 'Bob',
-        time: Date.now(),
-        postId: 2,
-    },
-    {
-        title: '1+1 = ?',
-        details: '',
-        author: 'Catherine',
-        time: Date.now(),
-        postId: 3,
-    }
-];
-
 export default class Home extends Component {
     static navigationOptions = {
-      title: 'Home'
+      title: 'Home',
+      tabBarIcon: ({ focused }) => {
+          focused ? icon_color = "while" : "grey"; 
+          return <Icon name="home" size={20} color={icon_color}/>
+        },
     }
 
-    componentDidMount() {
-        axios.get('http://18.221.224.217:8080/register?')
+    componentWillMount() {
+        axios.get('http://18.221.224.217:8080/get/post_summary_list', {params:{user_id: "5cf618e0f3295c559afd3281"}})
             .then(res => {
-                console.log(res);
                 this.setState({posts: res.data});
             })
     }
   
     constructor(props) {
-        super(props);
+        super();
         this.navigation = props.navigation;
         this.state = {
             search: '',
-            posts: {},
+            posts: [],
         }
     }
     
     _renderItem = item => {
         return (
-            <TouchableOpacity 
-                onPress = {this._showPost(item.postId)}
-            >
-                <Card
-                >
+            <TouchableOpacity onPress = {()=>this._showPost(item.post_id)}>
+                <Card>
                     <Text style={{ marginBottom: 10 }}>
                         {item.title}
                     </Text>
                     <Text style={{ marginBottom: 10 }}>
-                        {item.author}
+                        {item.user_info.last_name}
                     </Text>
                 </Card>
             </TouchableOpacity>
@@ -73,8 +50,8 @@ export default class Home extends Component {
         this.setState({search});
     }
 
-    _showPost = postId => {
-        this.navigation.navigate('Post', {id: postId});
+    _showPost = post_id => {
+        this.navigation.navigate('Post', {post_id: post_id});
     }
 
     render() {
@@ -89,14 +66,14 @@ export default class Home extends Component {
                     style={styles.search}
                 />
                 <FlatList
-                    posts={this.state.posts}
+                    data={this.state.posts}
                     renderItem={({item}) => this._renderItem(item)}
                     keyExtractor={(item, index) => item.author}
                 />
 
                 <Button 
                     title="Add Question" 
-                    onPress={() => this.navigation.navigate('Post')} 
+                    onPress={() => this.navigation.navigate('PostPage')} 
                     style={styles.buttonText}
                 />
             </View>

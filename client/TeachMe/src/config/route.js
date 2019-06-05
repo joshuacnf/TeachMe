@@ -7,25 +7,20 @@ import Post from '../screens/Post';
 import {PostPage} from '../screens/PostPage/index';
 import {AnswerPage} from '../screens/AnswerPage/index';
 import {SelectTagsPage} from '../screens/SelectTagsPage/index';
-import {ProfilePage} from '../screens/ProfilePage/index';
+
 import {ChatPage} from '../screens/ChatPage/index';
+import ProfilePage from '../screens/ProfilePage';
+import ScreenBottomTab from '../screens/ScreenBottomTab';
+    
 
 
 const AppNavigator = createStackNavigator({
-    
     Profile:{
         screen:ProfilePage
     },
     ChatPage:{
         screen:ChatPage
     },
-    SignUp: { 
-        screen: Register 
-    },
-    PostPage:{
-        screen: PostPage
-    },
-    
     Login: { 
         screen: Login 
     },
@@ -35,9 +30,6 @@ const AppNavigator = createStackNavigator({
     Post: {
         screen: Post
     },
-    Home: { 
-        screen: Home 
-    },
     AnswerPage:{
         screen: AnswerPage
     },
@@ -45,6 +37,15 @@ const AppNavigator = createStackNavigator({
         screen:SelectTagsPage
     },
     
+    PostPage:{
+        screen: PostPage
+    },
+    SignUp: { 
+        screen: Register 
+    },
+    ScreenBottomTab: {
+        screen: ScreenBottomTab,
+    },
 });
 
 export default createAppContainer(AppNavigator);
