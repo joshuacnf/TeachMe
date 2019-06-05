@@ -40,7 +40,7 @@ const AddPostStack = createStackNavigator(
   }
 )
 
-const ProfileScreenStack = createStackNavigator(
+const ProfileScreenSwitch = createSwitchNavigator(
   {
     ProfileScreen: ProfilePage,
     LoginScreen: Login,
@@ -57,7 +57,7 @@ const ProfileScreenStack = createStackNavigator(
 const AppSwitch = createBottomTabNavigator({
     HomeScreen: HomeScreenStack,
     AddPostScreen: AddPostStack,
-    ProfileScreen: ProfileScreenStack,
+    ProfileScreen: ProfileScreenSwitch,
 });
 
 const AuthStack = createStackNavigator({
