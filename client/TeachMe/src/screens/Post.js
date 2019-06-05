@@ -7,7 +7,8 @@ import axios from 'axios';
 
 export default class Post extends Component {
     static navigationOptions = {
-        title: "Post"
+        title: "Post",
+        headerLeft: null,
     }
 
     componentWillMount() {

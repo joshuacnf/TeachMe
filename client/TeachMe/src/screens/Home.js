@@ -11,9 +11,9 @@ import axios from 'axios';
 class Home extends Component {
     static navigationOptions = {
       title: 'Home',
+      headerLeft: null,
       tabBarIcon: ({ focused }) => {
-          focused ? icon_color = "while" : "grey";
-          return <Icon name="home" size={20} color={icon_color}/>
+          return <Icon name="home" size={20} color={focused ? '#2196F3' : '#808080'}/>
         },
     }
 

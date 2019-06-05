@@ -70,12 +70,6 @@ export default class Login extends Component {
                     onPress={() => this.register()} 
                     style={styles.button}
                 />
-                {/* temporary */}
-                <Button 
-                    title="Login" 
-                    onPress={() => this.navigation.navigate('Login')} 
-                    style={styles.buttonText}
-                />
             </View>
         );
     }

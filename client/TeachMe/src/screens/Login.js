@@ -7,7 +7,8 @@ import * as actionCreators from '../redux/actions';
 
 class Login extends Component {
   static navigationOptions = {
-    title: 'Login'
+    title: 'Login',
+    headerLeft: null
   }
 
   constructor(props) {
