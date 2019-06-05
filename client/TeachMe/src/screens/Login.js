@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export default class Login extends Component {
   static navigationOptions = {
-    title: 'Home'
+    title: 'Login'
   }
 
   constructor(props) {
@@ -23,24 +23,26 @@ export default class Login extends Component {
       last_name: '',
       email: this.state.email,
       password: this.state.password,
-  };
-
-  axios.get('http://18.221.224.217:8080/login', {params:{user_info: userInfo}})
-      .then(res => {
-          console.log(res);
-          if(res.status == 404){
-            // login failed
-            this.setState({email:'', password:''})
-          }
-          else if (res.status == 200){
-            // login succeeded
-            this.navigation.navigate('Home', {email: this.state.email});
-          }
-      })
-      .catch(error => {
-          console.log(error.response)
-      });
+    };
+    axios.get('http://18.221.224.217:8080/login', {params:{user_info: userInfo}})
+    .then(res => {
+        if(res.status == 404){
+          // login failed
+          this.setState({email:'', password:''})
+        }
+        else if (res.status == 200){
+          // login succeeded
+          this.navigation.navigate('ScreenBottomTab', {email: this.state.email});
+        }
+    })
+    .catch(error => {
+        console.log(error.response)
+    });
   }
+
+  register = () => {
+    this.navigation.navigate('SignUp');
+  };
 
   render() {
     return (
@@ -71,6 +73,12 @@ export default class Login extends Component {
             onPress={() => this.login()}
           >
             <Text style={styles.buttonText}>LOGIN</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.buttonContainer} 
+            onPress={() => this.navigation.navigate('SignUp')}
+          >
+            <Text style={styles.buttonText}>SIGNUP</Text>
           </TouchableOpacity>
           </View>
         </View>

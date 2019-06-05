@@ -8,16 +8,17 @@ import {PostPage} from '../screens/PostPage/index';
 import {AnswerPage} from '../screens/AnswerPage/index';
 import {SelectTagsPage} from '../screens/SelectTagsPage/index';
 import {ProfilePage} from '../screens/ProfilePage/index';
+import ScreenBottomTab from '../screens/ScreenBottomTab';
 
 const AppNavigator = createStackNavigator({
+    Login: { 
+        screen: Login 
+    },
     Home: { 
         screen: Home 
     },
     Post: {
         screen: Post
-    },
-    Home: { 
-        screen: Home 
     },
     AnswerPage:{
         screen: AnswerPage
@@ -34,8 +35,8 @@ const AppNavigator = createStackNavigator({
     SignUp: { 
         screen: Register 
     },
-    Login: { 
-        screen: Login 
+    ScreenBottomTab: {
+        screen: ScreenBottomTab,
     },
 });
 

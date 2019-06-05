@@ -11,10 +11,17 @@ import {
 import {styles} from './styles';
 import { throwStatement } from '@babel/types';
 import ImagePicker from 'react-native-image-picker';
-
-
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 export default class ProfilePage extends Component{
+  static navigationOptions = {
+    title: 'User',
+    tabBarIcon: ({ focused }) => {
+        focused ? icon_color = "while" : "grey"; 
+        return <Icon name="user" size={20} color={icon_color}/>
+      },
+  }
+
     constructor(props){
         super(props);
         this.state = {

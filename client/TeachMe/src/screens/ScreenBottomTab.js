@@ -1,10 +1,21 @@
 import React from 'react';
-import { Text, View } from 'react-native';
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 
+import Home from '../screens/Home';
+import {PostPage} from '../screens/PostPage/index';
+import {ProfilePage} from '../screens/ProfilePage/index';
+
 const TabNavigator = createBottomTabNavigator({
-  Home: HomeScreen,
-  Settings: SettingsScreen,
-});
+    Home: { 
+        screen: Home 
+    },
+    NewPost: {
+        screen: PostPage
+    },
+    Profile:{
+        screen:ProfilePage
+    },
+    // Instant message
+},);
 
 export default createAppContainer(TabNavigator);

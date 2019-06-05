@@ -5,11 +5,15 @@ import {styles} from './styles';
 import TagButton from './TagButton';
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory';
 import {InputAccessoryView} from 'react-native';
-
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 class PostPage extends Component {
     static navigationOptions = {
-        title: "PostPage"
+        title: "PostPage",
+        tabBarIcon: ({ focused }) => {
+            focused ? icon_color = "while" : "grey"; 
+            return <Icon name="plus" size={20} color={icon_color}/>
+          },
     };
 
     constructor(props){

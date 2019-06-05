@@ -2,13 +2,18 @@ import React, {Component} from 'react';
 import { View, Button, Text, FlatList, TouchableOpacity } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { Card } from '@shoutem/ui/components/Card'
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 import styles from './style';
 import axios from 'axios';
 
 export default class Home extends Component {
     static navigationOptions = {
-      title: 'Home'
+      title: 'Home',
+      tabBarIcon: ({ focused }) => {
+          focused ? icon_color = "while" : "grey"; 
+          return <Icon name="home" size={20} color={icon_color}/>
+        },
     }
 
     componentWillMount() {
