@@ -7,6 +7,9 @@ import { KeyboardAccessoryView } from 'react-native-keyboard-accessory';
 import {InputAccessoryView} from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
+import axios from 'axios';
+import { connect } from "react-redux";
+
 class PostPage extends Component {
     static navigationOptions = {
         title: "PostPage",
@@ -29,23 +32,23 @@ class PostPage extends Component {
 
     _post() {
         post_content = {
-            // post_summary = {
-            //     user_info = {
-            //         user_id: this.state.user_id,
-            //     },
-            //     title: this.state.title,
-            //     tags: this.state.tags,
-            // },
-            // content: this.state.content,
+            post_summary : {
+                user_info : {
+                    user_id: this.props.userInfo.user_id,
+                },
+                title: this.state.title,
+                tags: this.state.tags,
+            },
+            content: this.state.content,
             // pics: this.state.pics,
-            user_id: this.state.user_id,
+            // user_id: this.state.user_id,
             title: this.state.title,
             tags: this.state.tags,
             content: this.state.content,
             pics: this.state.pics,
         };
     
-        axios.post('http://18.221.224.217:8080/post/post', {params:{post_content}})
+        axios.post('http://18.221.224.217:8080/post/post', post_content)
             .then(res => {
                 if (res.status == 200){
                     // post succeeded
@@ -55,6 +58,8 @@ class PostPage extends Component {
             .catch(error => {
                 console.log(error.response)
             });
+        
+        this.navigation.navigate('HomeScreen')
     }
 
     componentWillReceiveProps(nextProps){
@@ -182,7 +187,11 @@ class PostPage extends Component {
     }
 }
 
-export default PostPage;
+function mapStateToProps(state) {
+    return { userInfo: state.reducers.userInfo };
+}
+
+export default connect(mapStateToProps)(PostPage);
 
 
 
