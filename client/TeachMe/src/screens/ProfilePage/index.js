@@ -105,6 +105,9 @@ class ProfilePage extends Component{
                         <Text style={{fontSize:18,color:'grey',fontWeight:'bold'}}>View past answers</Text>
                     </TouchableOpacity>
 
+                    <TouchableOpacity style={styles.row} onPress={()=>this.navigation.navigate("SignIn")}>
+                        <Text style={{fontSize:18,color:'grey',fontWeight:'bold'}}>Logout</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         );

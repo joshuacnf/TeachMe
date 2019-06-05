@@ -41,10 +41,9 @@ const AddPostStack = createStackNavigator(
   }
 )
 
-const ProfileScreenSwitch = createSwitchNavigator(
+const ProfileScreenStack = createStackNavigator(
   {
     ProfileScreen: ProfilePage,
-    LoginScreen: Login,
   },
   {
     navigationOptions: {
@@ -58,7 +57,7 @@ const ProfileScreenSwitch = createSwitchNavigator(
 const AppSwitch = createBottomTabNavigator({
     HomeScreen: HomeScreenStack,
     AddPostScreen: AddPostStack,
-    ProfileScreen: ProfileScreenSwitch,
+    ProfileScreen: ProfileScreenStack,
 });
 
 const AuthStack = createStackNavigator({
@@ -75,63 +74,3 @@ export default createAppContainer(createSwitchNavigator(
     initialRouteName: 'Auth',
   }
 ));
-
-
-// const bottomTabNavigator = createBottomTabNavigator({
-//     Home: createStackNavigator({
-//             Home: {
-//                 screen: Home,
-//             },
-//             Post: {
-//                 screen: Post,
-//             }
-//         }),
-//     // Home: Home,
-//     NewPost: {
-//         screen: PostPage
-//     },
-//     // ProfilePage: {
-//     //     screen: createSwitchNavigator(
-//     //     {
-//     //         ProfilePage: ProfilePage,
-//     //         Login: Login
-//     //     }
-//     // )},
-//     ProfilePage: {
-//         screen: ProfilePage
-//     }
-// });
-
-// const AppNavigator = createStackNavigator({
-//     Login: createSwitchNavigator(
-//         {
-//             Login: Login,
-//             BottomTab: bottomTabNavigator
-//         },
-//     ),
-//     SignUp: Register
-// })
-
-// const AppNavigator = createStackNavigator({
-//     Login: {
-//         screen: Login
-//     },
-//     SignUp: {
-//         screen: Register
-//     },
-//     ScreenBottomTab: bottomTabNavigator,
-//     ProfilePage: {
-//         screen: ProfilePage,
-//     },
-//     AnswerPage: {
-//         screen: AnswerPage,
-//     },
-//     Post: {
-//         screen: Post,
-//     },
-// }, {
-//     headerMode: 'none'
-// });
-
-
-// export default createAppContainer(AppNavigator);
