@@ -28,7 +28,7 @@ class Home extends Component {
 
   componentWillMount() {
     this.fetchData()
-    this.props.navigation.addListener('willFocus', this.fetchData)
+    this.props.navigation.addListener('didFocus', this.fetchData)
   }
 
   fetchData = () => {
@@ -70,7 +70,7 @@ class Home extends Component {
         <View style={{marginTop:2,marginBottom:5,flexDirection:'row'}}>
           {tags.map(item => {
             return (
-              <Text style={{backgroundColor:'#F5F5F5',padding:3,fontSize:10}}>
+              <Text style={{backgroundColor:'#F5F5F5',padding:3,fontSize:10}} key={item}>
                 {item}
               </Text>
             )
@@ -156,9 +156,15 @@ class Home extends Component {
     var month = months[a.getMonth()];
     var date = a.getDate();
     var hour = a.getHours();
+    if (hour < 10) {
+      hour = '0' + hour;
+    }
     var min = a.getMinutes();
+    if (min < 10) {
+      min = '0' + min;
+    }    
     var sec = a.getSeconds();
-    var time = month + ' ' + date + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+    var time = month + ' ' + date + ' ' + year + ' ' + hour + ':' + min;
     return time;
   }
 }

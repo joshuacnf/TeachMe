@@ -19,13 +19,13 @@ class SelectTagsPage extends Component {
     }
 
     _submitTag = () => {
-        this.navigation.navigate('PostPage',{
+        this.navigation.navigate('AddPostScreen',{
             tagName:this.state.text
         });
     }
 
     _submitSuggestedTag = (name) => {
-        this.navigation.navigate('PostPage',{
+        this.navigation.navigate('AddPostScreen',{
             tagName:name
         });
     }
