@@ -1,32 +1,36 @@
 import React, {Component} from "react"
 import { FlatList, Text, View } from "react-native"
 import { List, ListItem, Avatar } from "react-native-elements"
+import { connect } from "react-redux"
 
-export default class MyList extends Component {
+import axios from 'axios'
+
+class ContactPage extends Component {
 
   constructor(props) {
     super();
     this.navigation = props.navigation;
     this.state = {
       data: [],
-      page: 0,
-      loading: false
+      refreshing: false,
     };
   }
 
   componentWillMount() {
+    this.setState({refreshing: true})
     this.fetchData();
     this.props.navigation.addListener('willFocus', this.fetchData)
   }
 
   fetchData = async () => {
-    fetch(
-      "http://18.221.224.217:8080/get/chat_summary_list?user_id=5cf618e0f3295c559afd3281"
-    )
-    .then(res => res.json())
-    .then(res => {
-      this.setState({data: res});
-    });
+    axios.get('http://18.221.224.217:8080/get/chat_summary_list', {
+      params: {
+        user_id: this.props.userInfo.user_id
+      }
+    }).then(res => {
+        this.setState({ refreshing: false })
+        this.setState({ data: res.data });
+      })
   }
 
   render() {
@@ -37,6 +41,8 @@ export default class MyList extends Component {
             keyExtractor={x => x.contact_info.user_id}
             renderItem={({ item }) => this.renderItem(item)}
             ItemSeparatorComponent={this.renderSeparator}
+            onRefresh={() => this.fetchData()}
+            refreshing={this.state.refreshing}
           />
         </View>
     );
@@ -67,3 +73,9 @@ export default class MyList extends Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return { userInfo: state.reducers.userInfo };
+}
+
+export default connect(mapStateToProps)(ContactPage);

@@ -18,7 +18,7 @@ import ContactPage from '../screens/ContactPage'
 import Rank from '../screens/Rank'
 import OtherProfilePage from '../screens/OtherProfilePage'
 
-const HomeScreenStack = createStackNavigator(
+const HomeTabStack = createStackNavigator(
   {
     HomeScreen: Home,
     PostScreen: Post,
@@ -33,7 +33,7 @@ const HomeScreenStack = createStackNavigator(
   }
 )
 
-const AddPostStack = createStackNavigator(
+const AddPostTabStack = createStackNavigator(
   {
     AddPostScreen: PostPage,
     SelectTagsScreen: SelectTagsPage,
@@ -47,7 +47,7 @@ const AddPostStack = createStackNavigator(
   }
 )
 
-const IMScreenStack = createStackNavigator(
+const IMTabStack = createStackNavigator(
   {
     ContactScreen: ContactPage,
     ChatScreen: ChatPage,
@@ -61,7 +61,7 @@ const IMScreenStack = createStackNavigator(
   }
 )
 
-const ProfileScreenStack = createStackNavigator(
+const ProfileTabStack = createStackNavigator(
   {
     ProfileScreen: ProfilePage,
     ChatScreen: ChatPage,
@@ -75,7 +75,7 @@ const ProfileScreenStack = createStackNavigator(
   }
 )
 
-const RankScreenStack = createStackNavigator(
+const RankTabStack = createStackNavigator(
   {
     RankScreen: Rank,
     OtherProfileScreen: OtherProfilePage,
@@ -90,11 +90,11 @@ const RankScreenStack = createStackNavigator(
 )
 
 const AppSwitch = createBottomTabNavigator({
-  HomeScreen: HomeScreenStack,
-  AddPostScreen: AddPostStack,
-  IMScreen: IMScreenStack,
-  ProfileScreen: ProfileScreenStack,
-  RankScreen: RankScreenStack,
+  HomeTab: HomeTabStack,
+  AddPostTab: AddPostTabStack,
+  IMTab: IMTabStack,
+  ProfileTab: ProfileTabStack,
+  RankTab: RankTabStack,
 },
   {
     tabBarOptions: {
