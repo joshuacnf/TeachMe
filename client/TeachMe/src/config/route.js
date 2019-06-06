@@ -11,7 +11,7 @@ import PostPage from '../screens/PostPage'
 import AnswerPage from "../screens/AnswerPage"
 import SelectTagsPage from "../screens/SelectTagsPage/SelectTagsPage"
 import Post from "../screens/Post"
-import ChatPage from '../screens/ChatPage/index';
+import ChatPage from '../screens/ChatPage/ChatPage';
 
 const HomeScreenStack = createStackNavigator(
   {
@@ -41,6 +41,19 @@ const AddPostStack = createStackNavigator(
   }
 )
 
+const ChatScreenStack = createStackNavigator(
+  {
+    ChatScreen: ChatPage
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: ({ focused }) => {
+        return <Icon name="bubbles" size={20} color={focused ? '#2196F3' : '#808080'}/>
+      }
+    }
+  }
+)
+
 const ProfileScreenStack = createStackNavigator(
   {
     ProfileScreen: ProfilePage,
@@ -57,6 +70,7 @@ const ProfileScreenStack = createStackNavigator(
 const AppSwitch = createBottomTabNavigator({
     HomeScreen: HomeScreenStack,
     AddPostScreen: AddPostStack,
+    ChatScreen: ChatScreenStack,
     ProfileScreen: ProfileScreenStack,
 });
 
