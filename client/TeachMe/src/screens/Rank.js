@@ -53,7 +53,7 @@ class Rank extends Component {
         super();
         this.navigation = props.navigation;
         this.state = {
-            rank_info: rank_info_data,
+            rank_info: [],
         };
     }
 
