@@ -8,6 +8,30 @@ import { connect } from "react-redux";
 import styles from './style';
 import axios from 'axios';
 
+/*
+const rank_info_data = [
+  {
+    user_id: "1",
+    first_name: "Ken",
+    last_name: "Xu",
+    score: 100,
+  },
+  {
+    user_id: "2",
+    first_name: "Joshua",
+    last_name: "Zhang",
+    score: 99,
+  },
+  {
+    user_id: "3",
+    first_name: "Zack",
+    last_name: "Yang",
+    score: 98,
+  }
+
+]
+*/
+
 class Rank extends Component {
     static navigationOptions = {
         title: "Rank",
@@ -17,6 +41,7 @@ class Rank extends Component {
         //    },
     }
 
+    
     componentWillMount() {
         axios.get('http://18.221.224.217:8080/get/rank', {params: {user_id: this.props.userInfo.user_id}})
             .then(res => {
@@ -28,12 +53,12 @@ class Rank extends Component {
         super();
         this.navigation = props.navigation;
         this.state = {
-            rank_info: [],
+            rank_info: rank_info_data,
         };
     }
 
     showProfile = userInfo => {
-        this.navigation.navigate('Profile', {userInfo: userInfo});
+        this.navigation.navigate('OtherProfileScreen', {userInfo: userInfo});
     }
 
     // styles = StyleSheet.create({
@@ -54,21 +79,16 @@ class Rank extends Component {
 
     renderItem = item => {
       return (
-        <View style={{ height: 70 }}>
-        <TouchableOpacity onPress = {()=>this.showProfile(item)}>
-          <ListItem
-            name={item.user_firstname + ' ' + item.user_lastname}
-            titleStyle={{ fontWeight: 'bold' }}
-            // subtitle={item.content}
-            // rightSubtitle={`${item.contact_info.first_name} ${item.contact_info.last_name}`}
-            score={item.score}
-            subtitleStyle={{ color: '#a9a9a9', fontWeight: '400' }}
-            containerStyle={{ borderBottomWidth: 0 }}
-          />
-        </TouchableOpacity>
+        <View style={{marginTop:5,paddingLeft:5,paddingBottom:3}}>
+          <TouchableOpacity onPress={() => this.showProfile(item)} >
+            <Text style={{fontSize:18,fontWeight:'bold'}}>{item.first_name + " " + item.last_name}</Text>
+            <Text style={{color: '#a9a9a9', fontWeight: '400',marginTop:10}}>
+              {item.score}
+            </Text>
+          </TouchableOpacity>
         </View>
-      )
-    }
+      );
+    };
 
     renderSeparator = () => {
       return (
