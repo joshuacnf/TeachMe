@@ -201,7 +201,8 @@ async def get_post_summary_list(request):
 
     if not tags:
         result = [ x['post_summary'] for x in db_post.find(
-            {'post_summary.user_info.institution': inst}) ]
+            {'post_summary.user_info.institution': inst}).sort(
+                'post_summary.timestamp_update', pymongo.DESCENDING) ]
 
     return web.Response(status=200, text=json.dumps(result))
 
