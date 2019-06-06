@@ -18,7 +18,7 @@ class Rank extends Component {
     }
 
     componentWillMount() {
-        axios.get('http://18.221.224.217:8080/get/leaderboard', {params: {user_id: this.props.userInfo.user_id}})
+        axios.get('http://18.221.224.217:8080/get/rank', {params: {user_id: this.props.userInfo.user_id}})
             .then(res => {
                 this.setState({rank_info: res.data});
             })
