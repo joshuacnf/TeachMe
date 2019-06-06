@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { 
-    StyleSheet, 
-    Image, 
-    View, 
-    Text, 
-    TextInput, 
+import {
+    StyleSheet,
+    Image,
+    View,
+    Text,
+    TextInput,
     TouchableOpacity,
     KeyboardAvoidingView
   } from 'react-native';
@@ -67,7 +67,7 @@ class Login extends Component {
           <View style={styles.logoContainer}>
             <Image
               style={styles.logo}
-              source={require('../images/Octocat.png')}
+              source={require('../images/logo.jpg')}
             />
             <Text style={styles.title}>An App made for online and offline tutoring</Text>
           </View>
@@ -85,14 +85,14 @@ class Login extends Component {
               value={this.state.password}
               secureTextEntry={true}
             />
-            <TouchableOpacity 
-              style={styles.buttonContainer} 
+            <TouchableOpacity
+              style={styles.buttonContainer}
               onPress={() => this.login()}
             >
               <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.buttonContainer} 
+            <TouchableOpacity
+              style={styles.buttonContainer}
               onPress={() => this.navigation.navigate('SignUp')}
             >
               <Text style={styles.buttonText}>SIGNUP</Text>
@@ -116,7 +116,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Login);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3498db',
+    backgroundColor: '#FFF',
     padding: 20,
   },
   logoContainer: {
@@ -130,21 +130,24 @@ const styles = StyleSheet.create({
     height: 200
   },
   title: {
-    color: '#FFF',
+    color: '#000000',
     marginTop: 10,
     width: 160,
     textAlign: 'center',
     opacity: 0.9
-  }, 
+  },
   input: {
     height: 40,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    backgroundColor: '#FFF',
     marginBottom: 20,
-    color: '#FFF',
+    color: '#000000',
     paddingHorizontal: 20
   },
   buttonContainer: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#1a8cff',
     paddingVertical: 15
   },
   buttonText: {
