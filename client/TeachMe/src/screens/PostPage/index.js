@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {View,Text,TextInput,Button,TouchableOpacity,ScrollView} from 'react-native';
+import {View,Text,TextInput,Button,TouchableOpacity,
+        ScrollView,Keyboard,TouchableWithoutFeedback
+    } from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import {styles} from './styles';
 import TagButton from '../../components/TagButton';
@@ -140,22 +142,29 @@ class PostPage extends Component {
 
     render(){
         return (
-            <View style={styles.container} >
-            
-                <TextInput
-                    onChangeText={txt=> this.setState({title:txt})}
-                    style = {styles.title}
-                    placeholder = "Add title"
-                    placeholderTextColor={'grey'}
-                    fontWeight= {'bold'}
-                    multiline = {true}
-                />
-                <TextInput
-                    onChangeText={txt=> this.setState({content:txt})}
-                    style = {styles.content}
-                    placeholder="Enter your post here"
-                    multiline={true}
-                />
+            <KeyboardAvoidingView style={styles.container} behavior='height' enabled>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={{paddingBottom:40}}>
+                        <TextInput
+                            onChangeText={txt=> this.setState({title:txt})}
+                            style = {styles.title}
+                            placeholder = "Add title"
+                            placeholderTextColor={'grey'}
+                            fontWeight= {'bold'}
+                            multiline = {true}
+                        />
+
+                        <TextInput
+                            onChangeText={txt=> this.setState({content:txt})}
+                            style = {styles.content}
+                            placeholder="Enter your post here"
+                            multiline={true}
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
+                
+                
+                
 
                 <View style={styles.tagArea}>
                     <Text style={{fontWeight:'bold',fontSize:20}}>Tags</Text>
@@ -179,10 +188,8 @@ class PostPage extends Component {
                         <Text style={{color:'white',fontSize:20}}>Upload</Text>
                     </TouchableOpacity>
                 </View>
-
-
            
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }

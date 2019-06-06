@@ -65,14 +65,12 @@ class Home extends Component {
         <View style={{marginTop:2,marginBottom:5,flexDirection:'row'}}>
           {tags.map(item => {
             return (
-              <Text style={{backgroundColor:'#F5F5F5',padding:3,fontSize:10}}>
+              <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}}>
                 {item}
               </Text>
             )
           })}
         </View>
-        
-        
       );
     };
 
@@ -117,9 +115,9 @@ class Home extends Component {
       return (
         <View
           style={{
-            height: 1,
+            height: 4,
             width: "100%",
-            backgroundColor: "#CED0CE",
+            backgroundColor: "#D3D3D3",
           }}
         />
       );

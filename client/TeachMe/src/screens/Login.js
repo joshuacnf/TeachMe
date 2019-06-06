@@ -63,7 +63,7 @@ class Login extends Component {
 
   render() {
     return (
-        <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
+        <KeyboardAvoidingView style={styles.container} behavior="position" enabled>
           <View style={styles.logoContainer}>
             <Image
               style={styles.logo}
@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexGrow: 1,
     justifyContent: 'center',
+    marginTop:20
   },
   logo: {
     width: 200,
@@ -150,5 +151,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#FFFFFF',
     fontWeight: '700'
+  },
+  formContainer:{
+    marginTop:50
   }
 });

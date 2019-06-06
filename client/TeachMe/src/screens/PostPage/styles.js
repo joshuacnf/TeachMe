@@ -58,18 +58,19 @@ const styles = StyleSheet.create({
       title:{
           fontSize:20,
           width:'100%'
+          
       },
       content:{
           fontSize:18,
           marginTop:15,
           width:'100%',
-          height:260
+          height:240
       },
       tagArea:{
-          marginTop:20
+          marginTop:15
       },
       addTag:{
-          marginTop:17,
+          marginTop:14,
           marginLeft:12
       },
       uploadBtn:{
