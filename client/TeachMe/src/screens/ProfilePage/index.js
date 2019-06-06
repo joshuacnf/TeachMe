@@ -24,9 +24,10 @@ class ProfilePage extends Component {
   constructor(props) {
     super();
     this.navigation = props.navigation;
-    user_id = this.navigation.getParam('user_id');
+    navig_user_id = this.navigation.getParam('user_id');
     this.state = {
-      userId: user_id == undefined ? props.userInfo.user_id : user_id,
+      other_user: navig_user_id != undefined,
+      userId: navig_user_id == undefined ? props.userInfo.user_id : navig_user_id,
       imageSource: null,
       userInfo: null,
     }
@@ -143,14 +144,24 @@ class ProfilePage extends Component {
             }
           </TouchableOpacity>
 
-          <Text style={styles.userName}>{this.props.userInfo.first_name + " " + this.props.userInfo.last_name}</Text>
+          {this.state.other_user ?
+            this.state.userInfo && 
+            <Text style={styles.userName}>
+              {this.state.userInfo.first_name + " " + this.state.userInfo.last_name}
+            </Text>:
+            <Text style={styles.userName}>
+              {this.props.userInfo.first_name + " " + this.props.userInfo.last_name}
+            </Text>
+          }
 
-          <TouchableOpacity
-            style={styles.sendMessage}
-            onPress={() => this.startChat()}
-          >
-            <Text style={{ color: 'white', fontSize: 20 }}>Send Message</Text>
-          </TouchableOpacity>
+          {this.state.other_user && 
+            <TouchableOpacity
+                style={styles.sendMessage}
+                onPress={() => this.startChat()}
+            >
+                <Text style={{ color: 'white', fontSize: 20 }}>Send Message</Text>
+            </TouchableOpacity>
+          }
         </View>
 
         <View style={{ flex: 0.5 }}>
@@ -162,9 +173,11 @@ class ProfilePage extends Component {
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>View past answers</Text>
           </TouchableOpacity>
 
+          {!this.state.other_user && 
           <TouchableOpacity style={styles.row} onPress={() => this.navigation.navigate("SignIn")}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>Logout</Text>
           </TouchableOpacity>
+          }
         </View>
       </View>
     );

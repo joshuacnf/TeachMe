@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Button, FlatList,StyleSheet } from 'react-native';
+import { View, Text, Button, FlatList,StyleSheet, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-elements';
 
 //import styles from './style'
@@ -128,10 +128,11 @@ export default class Post extends Component {
                 </View>
                 :
                 <View style={styles.container}>
-                    <Text style={{fontSize:18,}}>
-                        {this.state.post.post_summary.user_info.last_name}
-                    </Text>
-                    
+                    <TouchableOpacity onPress={()=>this.navigation.navigate("ProfileScreen",{user_id: this.state.post.post_summary.user_info.user_id})}>
+                        <Text style={{fontSize:18,}}>
+                            {this.state.post.post_summary.user_info.first_name + " " + this.state.post.post_summary.user_info.last_name}
+                        </Text>
+                    </TouchableOpacity>
                     <Text style={{fontSize:12,color:'grey',marginTop:8}}>
                         {this.epochToTime(this.state.post.post_summary.timestamp_create)}
                     </Text>
@@ -152,7 +153,7 @@ export default class Post extends Component {
                         keyExtractor={item => item.answer_id}
                     />
                     <Button
-                        onPress={() => this.navigation.navigate('AnswerPage',
+                        onPress={() => this.navigation.navigate('AnswerScreen',
                         {post_id: this.state.post.post_summary.post_id})} 
                         title="add your answer" 
                         style={styles.buttonText}
