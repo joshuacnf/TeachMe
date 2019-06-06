@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { 
+    StyleSheet, 
+    Image, 
+    View, 
+    Text, 
+    TextInput, 
+    TouchableOpacity,
+    KeyboardAvoidingView
+  } from 'react-native';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -55,7 +63,7 @@ class Login extends Component {
 
   render() {
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
           <View style={styles.logoContainer}>
             <Image
               style={styles.logo}
@@ -64,33 +72,33 @@ class Login extends Component {
             <Text style={styles.title}>An App made for online and offline tutoring</Text>
           </View>
           <View style={styles.formContainer}>
-          <TextInput
-            autoCapitalize = 'none'
-            style={styles.input}
-            onChangeText={(email) => this.setState({email})}
-            value={this.state.email}
-          />
-          <TextInput
-            secureTextEntry
-            style={styles.input}
-            onChangeText={(password) => this.setState({password})}
-            value={this.state.password}
-            secureTextEntry={true}
-          />
-          <TouchableOpacity 
-            style={styles.buttonContainer} 
-            onPress={() => this.login()}
-          >
-            <Text style={styles.buttonText}>LOGIN</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.buttonContainer} 
-            onPress={() => this.navigation.navigate('SignUp')}
-          >
-            <Text style={styles.buttonText}>SIGNUP</Text>
-          </TouchableOpacity>
+            <TextInput
+              autoCapitalize = 'none'
+              style={styles.input}
+              onChangeText={(email) => this.setState({email})}
+              value={this.state.email}
+            />
+            <TextInput
+              secureTextEntry
+              style={styles.input}
+              onChangeText={(password) => this.setState({password})}
+              value={this.state.password}
+              secureTextEntry={true}
+            />
+            <TouchableOpacity 
+              style={styles.buttonContainer} 
+              onPress={() => this.login()}
+            >
+              <Text style={styles.buttonText}>LOGIN</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.buttonContainer} 
+              onPress={() => this.navigation.navigate('SignUp')}
+            >
+              <Text style={styles.buttonText}>SIGNUP</Text>
+            </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
     );
   }
 }

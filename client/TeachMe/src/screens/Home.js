@@ -60,12 +60,33 @@ class Home extends Component {
     //   }
     // })
 
-    renderItem = item => {
+    renderTags = (tags) => {
       return (
-        <View style={{ height: 70 }}>
+        <View style={{marginTop:2,marginBottom:5,flexDirection:'row'}}>
+          {tags.map(item => {
+            return (
+              <Text style={{backgroundColor:'#F5F5F5',padding:3,fontSize:10}}>
+                {item}
+              </Text>
+            )
+          })}
+        </View>
+        
+        
+      );
+    };
+
+    /*renderItem = item => {
+      return (
+        <View style={{ height: 90 }}>
         <TouchableOpacity onPress = {()=>this.showPost(item.post_id)}>
           <ListItem
-            title={item.title}
+            title={
+              <View >
+                {item.tags.map(tag => this.renderTag(tag))}
+                <Text>{item.title}</Text>
+              </View>         
+            }
             titleStyle={{ fontWeight: 'bold' }}
             // subtitle={item.content}
             // rightSubtitle={`${item.contact_info.first_name} ${item.contact_info.last_name}`}
@@ -76,16 +97,29 @@ class Home extends Component {
         </TouchableOpacity>
         </View>
       )
-    }
+    }*/
+
+    renderItem = item => {
+      return (
+        <View style={{marginTop:5,paddingLeft:5,paddingBottom:3}}>
+          <TouchableOpacity onPress={() => this.showPost(item.post_id)} >
+            {item.tags.length >0 ? this.renderTags(item.tags): null}
+            <Text style={{fontSize:18,fontWeight:'bold'}}>{item.title}</Text>
+            <Text style={{color: '#a9a9a9', fontWeight: '400',marginTop:10}}>
+              {this.epochToTime(item.timestamp_create)}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    };
 
     renderSeparator = () => {
       return (
         <View
           style={{
             height: 1,
-            width: "90%",
+            width: "100%",
             backgroundColor: "#CED0CE",
-            marginLeft: "5%"
           }}
         />
       );
