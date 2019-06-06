@@ -87,7 +87,7 @@ async def get_register(request):
     if user_info is None:
         return web.Response(text='Invalid Registration Request')
     user_info = json.loads(user_info)
-    
+
     user_info['institution'] = parse_email_address(user_info['email'])
     if user_info['institution'] is None:
         return web.Response(status=400, text='Invalid email address')
@@ -158,11 +158,16 @@ async def get_login(request):
 @routes.get('/get/profile')
 async def get_profile(request):
     query = get_request_query(request)
-    email = None if ('email' not in query) else query['email'][0]
 
-    user_info = db_user.find_one({'email': email})
-    if user_info is None:
-        return web.Response(status=404, text='No Result Found (profile)')
+    user_info = None
+    if 'email' not in query:
+        user_id = query['user_id'][0]
+        user_info = db_user.find_one({'_id': ObjectId(user_id)})
+    else:
+        email = query['email'][0]
+        user_info = db_user.find_one({'email': email})
+        if user_info is None:
+            return web.Response(status=404, text='No Result Found (profile)')
 
     del user_info['_id']
     del user_info['password']
@@ -226,7 +231,7 @@ async def get_answer(request):
 
     if result is None:
         return web.Response(status=404, text='No Result Found')
-    
+
     del result['_id']
 
     print(json.dumps(result))
@@ -255,7 +260,7 @@ async def get_chat(request):
     result = db_message.find({'$or': [
         {'from': user1_id, 'to': user2_id},
         {'from': user2_id, 'to': user1_id}
-    ]}).sort('timestamp', pymongo.ASCENDING)
+    ]}).sort('timestamp', pymongo.DESCENDING)
 
     result = list(result)
     for doc in result:
@@ -276,8 +281,8 @@ async def get_chat_summary_list(request):
     ]}).sort('timestamp', pymongo.ASCENDING)
 
     tmp = []
-    result = list(result)    
-    for doc in result:        
+    result = list(result)
+    for doc in result:
         del doc['_id']
         contact_id = doc['from'] if doc['to'] == user_id else doc['to']
         contact_info = db_user.find_one({'_id': ObjectId(contact_id)})
@@ -301,6 +306,12 @@ async def post_post(request):
     post['answer_ids'] = []
     post['post_summary']['timestamp_create'] = int(time.time() * 1000)
     post['post_summary']['timestamp_update'] = post['post_summary']['timestamp_create']
+
+    author_id = post['post_summary']['user_info']['user_id']
+    print('author_id: {}'.format(author_id))
+    author_info = db_user.find_one({'_id': ObjectId(author_id)})
+    del author_info['_id'], author_info['password']
+    post['post_summary']['user_info'] = author_info
 
     if 'pics' in post:
         for p in post['pics']:
@@ -368,15 +379,17 @@ async def post_profile_pic(request):
     query = get_request_query(request)
     user_id = query['user_id'][0]
 
-    pic = await request.text()
+    pic = await request.json()
+
+    print(user_id)
+    print('post_pic: {}'.format(pic))
 
     user_info = db_user.find_one({'_id': ObjectId(user_id)})
     if 'pic_id' in user_info:
-        db_pic.update_one({'_id': ObjectId(user_info['pic_id'])},
-            {'$set': {'b64': pic}})
+        db_pic.replace_one({'_id': ObjectId(user_info['pic_id'])}, pic)
     else:
-        doc = {'b64': pic}
-        db_pic.insert_one(doc)
+        # doc = {'b64': pic}
+        db_pic.insert_one(pic)
         pic_id = str(doc['_id'])
         db_user.update_one({'_id': ObjectId(user_id)},
             {'$set': {'pic_id': pic_id}})
@@ -390,7 +403,7 @@ async def post_message(request):
     # src_id, dst_id = query['from'][0], query['to'][0]
 
     msg = await request.json()
-    msg['timestamp'] = int(time.time() * 1000)
+    print(msg)
 
     db_message.insert_one(msg)
     del msg['_id']
