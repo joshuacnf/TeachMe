@@ -1,96 +1,141 @@
+<<<<<<< HEAD
 import React, {Component} from 'react';
 import {View,Text,TextInput,Button,TouchableOpacity,
         ScrollView,Keyboard,TouchableWithoutFeedback
     } from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import {styles} from './styles';
+=======
+import React, { Component } from 'react';
+import { View, Text, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native';
+import { styles } from './styles';
+>>>>>>> 35942cd0088deb0959b8816c834c2b53ee7f8d0e
 import TagButton from '../../components/TagButton';
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory';
-import {InputAccessoryView} from 'react-native';
+import { InputAccessoryView } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 import axios from 'axios';
 import { connect } from "react-redux";
 
 class PostPage extends Component {
-    static navigationOptions = {
-        title: "PostPage",
-        // tabBarIcon: ({ focused }) => {
-        //     return <Icon name="plus" size={20} color={focused ? '#2196F3' : '#808080'}/>
-        // },
+  static navigationOptions = {
+    title: "PostPage",
+    // tabBarIcon: ({ focused }) => {
+    //     return <Icon name="plus" size={20} color={focused ? '#2196F3' : '#808080'}/>
+    // },
+  };
+
+  constructor(props) {
+    super(props);
+    this.navigation = props.navigation;
+    this.state = {
+      title: '',
+      user_id: '',
+      tags: [],
+      content: '',
+      pics: [],
+    };
+  }
+
+  componentDidMount() {
+    // this.props.navigation.addListener('didBlur', this.refresh)
+  }
+
+  reset = () => {
+    this.setState({
+      title: '',
+      tags: [],
+      content: '',
+      pics: [],
+    })
+  }
+
+  _post() {
+    post_content = {
+      post_summary: {
+        user_info: {
+          user_id: this.props.userInfo.user_id,
+        },
+        title: this.state.title,
+        tags: this.state.tags,
+      },
+      content: this.state.content,
+      // pics: this.state.pics,
+      // user_id: this.state.user_id,
+      title: this.state.title,
+      tags: this.state.tags,
+      content: this.state.content,
+      pics: this.state.pics,
     };
 
-    constructor(props){
-        super(props);
-        this.navigation = props.navigation;
-        this.state = {
-            title:'',
-            user_id: '',
-            tags:[],
-            content:'',
-            pics: [],
-        };
-    }
-
-    _post() {
-        post_content = {
-            post_summary : {
-                user_info : {
-                    user_id: this.props.userInfo.user_id,
-                },
-                title: this.state.title,
-                tags: this.state.tags,
-            },
-            content: this.state.content,
-            // pics: this.state.pics,
-            // user_id: this.state.user_id,
-            title: this.state.title,
-            tags: this.state.tags,
-            content: this.state.content,
-            pics: this.state.pics,
-        };
-    
-        axios.post('http://18.221.224.217:8080/post/post', post_content)
-            .then(res => {
-                if (res.status == 200){
-                    // post succeeded
-                    console.log(response)
-                }
-            })
-            .catch(error => {
-                console.log(error.response)
-            });
-        
-        this.navigation.navigate('HomeScreen')
-    }
-
-    componentWillReceiveProps(nextProps){
-        const tagName = nextProps.navigation.getParam('tagName');
-        if(tagName !== undefined && tagName !== ''){
-            if(!this.state.tags.includes(tagName)){
-                this.setState({tags:[...this.state.tags,tagName]});
-            }
+    axios.post('http://18.221.224.217:8080/post/post', post_content)
+      .then(res => {
+        if (res.status == 200) {
+          // post succeeded
+          console.log(response)
         }
-    }
+      })
+      .catch(error => {
+        console.log(error.response)
+      });
 
-    _selectTags = () => {
-        this.navigation.navigate('SelectTagsScreen');
-    }
+    this.reset();
 
-    _deleteTag = (name) => {
-        this.setState((prevState) => {
-            return {tags:prevState.tags.filter((value) =>{
-                return name !== value;
-            })}
-        });
-    }
+    this.navigation.navigate('HomeScreen')
+  }
 
-    _renderTag = (name) => {
-        return (
-            <TagButton title={name} key={name} delete={this._deleteTag.bind(this)} />
-        )
+  componentWillReceiveProps(nextProps) {
+    const tagName = nextProps.navigation.getParam('tagName');
+    if (tagName !== undefined && tagName !== '') {
+      if (!this.state.tags.includes(tagName)) {
+        this.setState({ tags: [...this.state.tags, tagName] });
+      }
     }
+  }
 
+  _selectTags = () => {
+    this.navigation.navigate('SelectTagsScreen');
+  }
+
+  _deleteTag = (name) => {
+    this.setState((prevState) => {
+      return {
+        tags: prevState.tags.filter((value) => {
+          return name !== value;
+        })
+      }
+    });
+  }
+
+  _renderTag = (name) => {
+    return (
+      <TagButton title={name} key={name} delete={this._deleteTag.bind(this)} />
+    )
+  }
+
+
+
+  /* _showTag(){
+       
+       this.setState((prevState) => {
+           return {isKeyboardVisible:!prevState.isKeyboardVisible};
+       });
+   }
+ 
+   _renderSelectTags(){
+           if(this.state.isKeyboardVisible){
+               return (
+                   
+                   <KeyboardAccessoryView 
+                       hideBorder={true}
+                       style={{backgroundColor:'white',marginBottom:-120}}
+                   > 
+                       <View style={styles.textInputView}>
+                           <View>
+                               <Text style={{fontSize:16,color:'grey'}}>Suggested</Text>
+                           </View>
    
 
    /* _showTag(){
@@ -195,7 +240,7 @@ class PostPage extends Component {
 }
 
 function mapStateToProps(state) {
-    return { userInfo: state.reducers.userInfo };
+  return { userInfo: state.reducers.userInfo };
 }
 
 export default connect(mapStateToProps)(PostPage);

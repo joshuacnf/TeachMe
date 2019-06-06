@@ -19,6 +19,7 @@ const HomeScreenStack = createStackNavigator(
   {
     HomeScreen: Home,
     PostScreen: Post,
+    AnswerScreen: AnswerPage,
   },
   {
     navigationOptions: {

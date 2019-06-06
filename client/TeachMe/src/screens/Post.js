@@ -7,7 +7,7 @@ import axios from 'axios';
 
 export default class Post extends Component {
     static navigationOptions = {
-        title: "Post",        
+        title: "Post",
     }
 
     componentWillMount() {
@@ -24,12 +24,12 @@ export default class Post extends Component {
                 }
             })
     }
-  
+
     constructor(props) {
         super();
         this.navigation = props.navigation;
         this.state = {
-            post_id: props.navigation.state.params.post_id, 
+            post_id: props.navigation.state.params.post_id,
             post: null,
             answers: [],
         };
@@ -95,9 +95,9 @@ export default class Post extends Component {
                     keyExtractor={item => item.answer_id}
                 />
                 <Button
-                    onPress={() => this.navigation.navigate('AnswerPage',
-                    {post_id: this.state.post.post_summary.post_id})} 
-                    title="add your answer" 
+                    onPress={() => this.navigation.navigate('AnswerScreen',
+                    {post_id: this.state.post.post_summary.post_id})}
+                    title="add your answer"
                     style={styles.buttonText}
                 />
                 </View>
