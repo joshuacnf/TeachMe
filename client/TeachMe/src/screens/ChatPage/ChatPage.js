@@ -1,49 +1,143 @@
-import React, {Component} from 'react';
-import {View,Text,TextInput,Button,TouchableOpacity,ScrollView} from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native';
 //import {styles} from './styles';
 import { GiftedChat } from 'react-native-gifted-chat'
 
+import axios from 'axios';
+import { connect } from "react-redux";
 
-class ChatPage extends Component{
-    state = {
-        messages: [],
+class ChatPage extends Component {
+  state = {
+    messages: [],
+  }
+
+  constructor(props) {
+    super();
+    this.navigation = props.navigation;
+    this.state = {
+      messages: [],
+      contact_id: '5cf618e2f3295c559afd3282',//props.navigation.state.params.contact_id,
+      contact_info: '',
+      user_info: '',
+    };
+  }
+
+  componentWillMount() {
+    axios.get('http://18.221.224.217:8080/get/profile',
+      { params: {user_id: this.state.contact_id} }
+    ).then(res => {
+      console.log(res)
+      this.setState({contact_info: res.data});
+      this.fetchData();
+    })
+    this.setState({
+      // messages: [
+      //   {
+      //     _id: 1,
+      //     text: 'Hello developer',
+      //     createdAt: new Date(),
+      //     user: {
+      //       _id: 2,
+      //       name: 'React Native',
+      //       avatar: 'https://placeimg.com/140/140/any',
+      //     },
+      //   },
+      // ],
+      messages: [],
+      user_info: this.props.userInfo,
+    })
+  }
+
+  fetchData = async () => {
+    axios.get(
+      'http://18.221.224.217:8080/get/chat', {
+        params: {
+          user1_id: this.state.contact_info.user_id,
+          user2_id: this.state.user_info.user_id,
+        }
       }
-    
-      componentWillMount() {
-        this.setState({
-          messages: [
-            {
+    ).then(res => {
+      msgs = res.data
+      tmp = []
+      idx = 0
+      for (var i = 0; i < msgs.length; i++) {
+        if (msgs[i].from == this.state.contact_info.user_id) {
+          message = {
+            _id: idx,
+            text: msgs[i].content,
+            createdAt: new Date(msgs[i].timestamp),
+            user: {
+              _id: 2,
+              name: `${this.state.contact_info.first_name} ${this.state.contact_info.last_name}`,
+              // avatar: '',
+            }
+          }          
+          tmp.push(message)
+          idx = idx + 1
+        }
+        if (msgs[i].from == this.state.user_info.user_id) {
+          message = {
+            _id: idx,
+            text: msgs[i].content,
+            createdAt: new Date(msgs[i].timestamp),
+            user: {
               _id: 1,
-              text: 'Hello developer',
-              createdAt: new Date(),
-              user: {
-                _id: 2,
-                name: 'React Native',
-                avatar: 'https://placeimg.com/140/140/any',
-              },
-            },
-          ],
+              name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
+            }
+          }
+          tmp.push(message)
+          idx = idx + 1
+        }
+      }
+      this.setState({ messages: tmp });
+    });
+  }
+
+  onSend(messages = []) {
+    console.log(messages[0])
+    for (const message of messages) {
+      msg = {
+        from: this.state.user_info.user_id,
+        to: this.state.contact_info.user_id,
+        content: message.text,
+        timestamp: 0 + Math.ceil(message.createdAt.getTime()),
+      }
+      axios.post('http://18.221.224.217:8080/post/message', msg)
+        .then(res => {
+          if (res.status == 200) {
+            // post succeeded
+            console.log(response)
+          }
         })
-      }
-    
-      onSend(messages = []) {
-        this.setState(previousState => ({
-          messages: GiftedChat.append(previousState.messages, messages),
-        }))
-      }
-    
-      render() {
-        return (
-          <GiftedChat
-            messages={this.state.messages}
-            onSend={messages => this.onSend(messages)}
-            user={{
-              _id: 1,
-            }}
-          />
-        )
-      }
+        .catch(error => {
+          console.log(error.response)
+        });
+    }
+
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
+  }
+
+  render() {
+    return (
+      <GiftedChat
+        messages={this.state.messages}
+        onSend={messages => this.onSend(messages)}
+        user={{
+          _id: 1,
+          // name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
+        }}
+        showUserAvatar={true}
+        // renderUsernameOnMessage={true}
+      />
+    )
+  }
 }
 
-export default ChatPage;
+function mapStateToProps(state) {
+  return { userInfo: state.reducers.userInfo };
+}
+
+export default connect(mapStateToProps)(ChatPage);
 
