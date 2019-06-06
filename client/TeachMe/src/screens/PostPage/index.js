@@ -31,15 +31,15 @@ class PostPage extends Component {
   }
 
   componentDidMount() {
-    this.props.navigation.addListener('willFocus', this.refresh)
+    // this.props.navigation.addListener('didBlur', this.refresh)
   }
 
-  refresh = () => {
+  reset = () => {
     this.setState({
       title: '',
       tags: [],
       content: '',
-      pics: []
+      pics: [],
     })
   }
 
@@ -71,6 +71,8 @@ class PostPage extends Component {
       .catch(error => {
         console.log(error.response)
       });
+
+    this.reset();
 
     this.navigation.navigate('HomeScreen')
   }
