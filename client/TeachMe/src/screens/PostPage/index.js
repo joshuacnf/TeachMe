@@ -1,16 +1,9 @@
-<<<<<<< HEAD
 import React, {Component} from 'react';
 import {View,Text,TextInput,Button,TouchableOpacity,
         ScrollView,Keyboard,TouchableWithoutFeedback
     } from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import {styles} from './styles';
-=======
-import React, { Component } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native';
-import { KeyboardAvoidingView } from 'react-native';
-import { styles } from './styles';
->>>>>>> 35942cd0088deb0959b8816c834c2b53ee7f8d0e
 import TagButton from '../../components/TagButton';
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory';
 import { InputAccessoryView } from 'react-native';
