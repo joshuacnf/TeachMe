@@ -22,6 +22,7 @@ const HomeTabStack = createStackNavigator(
   {
     HomeScreen: Home,
     PostScreen: Post,
+    PostProfileScreen: ProfilePage,
     AnswerScreen: AnswerPage,
   },
   {

@@ -128,7 +128,7 @@ export default class Post extends Component {
                 </View>
                 :
                 <View style={styles.container}>
-                    <TouchableOpacity onPress={()=>this.navigation.navigate("ProfileScreen",{user_id: this.state.post.post_summary.user_info.user_id})}>
+                    <TouchableOpacity onPress={()=>this.navigation.navigate("PostProfileScreen",{user_id: this.state.post.post_summary.user_info.user_id})}>
                         <Text style={{fontSize:18,}}>
                             {this.state.post.post_summary.user_info.first_name + " " + this.state.post.post_summary.user_info.last_name}
                         </Text>
