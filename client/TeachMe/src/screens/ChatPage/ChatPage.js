@@ -22,7 +22,7 @@ class ChatPage extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     axios.get('http://18.221.224.217:8080/get/profile',
       { params: {user_id: this.state.contact_id} }
     ).then(res => {
@@ -46,9 +46,13 @@ class ChatPage extends Component {
       messages: [],
       user_info: this.props.userInfo,
     })
+    this.props.navigation.addListener('willFocus', this.fetchData)
   }
 
   fetchData = async () => {
+    if (this.state.contact_info == '' || this.state.user_id == '') {
+      return 
+    }
     axios.get(
       'http://18.221.224.217:8080/get/chat', {
         params: {
@@ -126,7 +130,7 @@ class ChatPage extends Component {
         onSend={messages => this.onSend(messages)}
         user={{
           _id: 1,
-          // name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
+          name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
         }}
         showUserAvatar={true}
         // renderUsernameOnMessage={true}
