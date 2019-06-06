@@ -9,9 +9,8 @@ import {styles} from './styles';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import { connect } from "react-redux";
-import axios from 'axios';
 
-class ProfilePage extends Component{
+class OtherProfilePage extends Component{
     static navigationOptions = {
         title: 'User',
         // headerLeft: null,
@@ -25,14 +24,8 @@ class ProfilePage extends Component{
         this.navigation = props.navigation;
         this.state = {
             imageSource:null,
-            userInfo: this.props.userInfo,
+            userInfo: props.navigation.state.params.userInfo,
         }
-    }
-
-       
-
-    startChat(){
-        this.navigation.navigate('ChatPage');
     }
 
     selectPhotoTapped() {
@@ -45,10 +38,10 @@ class ProfilePage extends Component{
             skipBackup: true
           }
         };
-    
+
         ImagePicker.showImagePicker(options, (response) => {
           console.log('Response = ', response);
-    
+
           if (response.didCancel) {
             console.log('User cancelled photo picker');
           }
@@ -60,30 +53,13 @@ class ProfilePage extends Component{
           }
           else {
             let source = { uri: response.uri };
+
             // You can also display the image using data:
-            // let source = { uri: 'data:image/jpeg;base64,' + response.data }; 
+            // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
             this.setState({
               imageSource: source
             });
-            image_data = {
-                uri:response.uri,
-                type:'image/png',
-                name:'photo',
-                data:response.data
-            };
-            axios.post('http://18.221.224.217:8080/post/profile_pic'
-                        ,image_data,
-                        {params:{user_id:this.props.userInfo.user_id}}
-            ).then((res) => {
-                if (res.status == 200){
-                    console.log("response",res);
-                    console.log("success upload image");
-                }
-            })
-            .catch(error => {
-                console.log(error.response)
-            });
-
           }
         });
     }
@@ -94,7 +70,7 @@ class ProfilePage extends Component{
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => this.selectPhotoTapped()}>
-                    {this.state.imageSource === null ? 
+                    {this.state.imageSource === null ?
                         <Image
                             source={require('../../images/default.png')}
                             style={styles.userImage}
@@ -105,18 +81,15 @@ class ProfilePage extends Component{
                         />
                     }
                     </TouchableOpacity>
-                    
-                    <Text style={styles.userName}>{this.props.userInfo.first_name+" "+this.props.userInfo.last_name}</Text>
 
-                    <TouchableOpacity 
-                        style={styles.sendMessage}
-                        onPress={() => this.startChat()}
-                    > 
+                    <Text style={styles.userName}>{this.state.userInfo.first_name+" "+this.state.userInfo.last_name}</Text>
+
+                    <TouchableOpacity style={styles.sendMessage}>
                         <Text style={{color:'white',fontSize:20}}>Send Message</Text>
                     </TouchableOpacity>
                 </View>
 
-                <View style={{flex:0.5}}>              
+                <View style={{flex:0.5}}>
                     <TouchableOpacity style={styles.row}>
                         <Text style={{fontSize:18,color:'grey',fontWeight:'bold'}}>View past posts</Text>
                     </TouchableOpacity>
@@ -125,9 +98,6 @@ class ProfilePage extends Component{
                         <Text style={{fontSize:18,color:'grey',fontWeight:'bold'}}>View past answers</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.row} onPress={()=>this.navigation.navigate("SignIn")}>
-                        <Text style={{fontSize:18,color:'grey',fontWeight:'bold'}}>Logout</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
         );
@@ -138,4 +108,4 @@ function mapStateToProps(state) {
     return { userInfo: state.reducers.userInfo };
 }
 
-export default connect(mapStateToProps)(ProfilePage);
+export default connect(mapStateToProps)(OtherProfilePage);
