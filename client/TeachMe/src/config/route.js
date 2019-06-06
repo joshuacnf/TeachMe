@@ -12,6 +12,8 @@ import AnswerPage from "../screens/AnswerPage"
 import SelectTagsPage from "../screens/SelectTagsPage/SelectTagsPage"
 import Post from "../screens/Post"
 import ChatPage from '../screens/ChatPage/ChatPage';
+import Rank from '../screens/Rank'
+import OtherProfilePage from '../screens/OtherProfilePage'
 
 const HomeScreenStack = createStackNavigator(
   {
@@ -67,11 +69,26 @@ const ProfileScreenStack = createStackNavigator(
   }
 )
 
+const RankScreentStack = createStackNavigator(
+  {
+    RankScreen: Rank,
+    OtherProfileScreen: OtherProfilePage,    
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: ({ focused }) => {
+        return <Icon name="trophy" size={20} color={focused ? '#2196F3' : '#808080'}/>
+      },
+    }
+  }
+)
+
 const AppSwitch = createBottomTabNavigator({
     HomeScreen: HomeScreenStack,
     AddPostScreen: AddPostStack,
     ChatScreen: ChatScreenStack,
     ProfileScreen: ProfileScreenStack,
+    RankScreen: RankScreentStack,
 });
 
 const AuthStack = createStackNavigator({
