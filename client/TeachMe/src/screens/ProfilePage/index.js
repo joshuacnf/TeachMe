@@ -9,6 +9,7 @@ import {styles} from './styles';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import { connect } from "react-redux";
+import axios from 'axios';
 
 class ProfilePage extends Component{
     static navigationOptions = {
@@ -27,6 +28,8 @@ class ProfilePage extends Component{
             userInfo: this.props.userInfo,
         }
     }
+
+       
 
     startChat(){
         this.navigation.navigate('ChatPage');
@@ -57,13 +60,30 @@ class ProfilePage extends Component{
           }
           else {
             let source = { uri: response.uri };
-    
             // You can also display the image using data:
-            // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-    
+            // let source = { uri: 'data:image/jpeg;base64,' + response.data }; 
             this.setState({
               imageSource: source
             });
+            image_data = {
+                uri:response.uri,
+                type:'image/png',
+                name:'photo',
+                data:response.data
+            };
+            axios.post('http://18.221.224.217:8080/post/profile_pic'
+                        ,image_data,
+                        {params:{user_id:this.props.userInfo.user_id}}
+            ).then((res) => {
+                if (res.status == 200){
+                    console.log("response",res);
+                    console.log("success upload image");
+                }
+            })
+            .catch(error => {
+                console.log(error.response)
+            });
+
           }
         });
     }
