@@ -8,13 +8,13 @@ import { connect } from "react-redux";
 import styles from './style';
 import axios from 'axios';
 
-class Home extends Component {
+class Rank extends Component {
     static navigationOptions = {
         title: "Rank",
-        headerLeft: null,
-        tabBarIcon: ({ focused }) => {
-                return <Icon name="rank" size={20} color={focused ? '#2196F3' : '#808080'}/>
-            },
+        //headerLeft: null,
+        //tabBarIcon: ({ focused }) => {
+        //        return <Icon name="rank" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        //    },
     }
 
     componentWillMount() {
@@ -28,12 +28,12 @@ class Home extends Component {
         super();
         this.navigation = props.navigation;
         this.state = {
-            rank_info: null,
+            rank_info: [],
         };
     }
 
-    showProfile = user_id => {
-        this.navigation.navigate('Profile', {user_id: user_id});
+    showProfile = userInfo => {
+        this.navigation.navigate('Profile', {userInfo: userInfo});
     }
 
     // styles = StyleSheet.create({
@@ -55,9 +55,9 @@ class Home extends Component {
     renderItem = item => {
       return (
         <View style={{ height: 70 }}>
-        <TouchableOpacity onPress = {()=>this.showProfile(item.user_id)}>
+        <TouchableOpacity onPress = {()=>this.showProfile(item.userInfo)}>
           <ListItem
-            name={item.user_firstname + ' ' + item.user_lastname}
+            name={item.userInfo.user_firstname + ' ' + item.userInfo.user_lastname}
             titleStyle={{ fontWeight: 'bold' }}
             // subtitle={item.content}
             // rightSubtitle={`${item.contact_info.first_name} ${item.contact_info.last_name}`}
@@ -88,8 +88,8 @@ class Home extends Component {
             <View style={{ flex: 1 }}>
 
                 <FlatList
-                  data={this.state.data}
-                  keyExtractor={item => item.user_id}
+                  data={this.state.rank_info}
+                  keyExtractor={item => item.user_info.user_id}
                   renderItem={({ item }) => this.renderItem(item)}
                   ItemSeparatorComponent={this.renderSeparator}
                 />
