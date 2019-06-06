@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { View, Text, Button, FlatList } from 'react-native';
+import { View, Text, Button, FlatList,StyleSheet } from 'react-native';
 import { Card } from 'react-native-elements';
 
-import styles from './style'
+//import styles from './style'
 import axios from 'axios';
 
 export default class Post extends Component {
@@ -46,7 +46,21 @@ export default class Post extends Component {
         )
     }
 
-    render() {
+    epochToTime = epoch => {
+        var a = new Date(epoch);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var hour = a.getHours();
+        var min = a.getMinutes();
+        var sec = a.getSeconds();
+        var time = month + ' ' + date + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        return time;
+      }
+  
+
+    /*render() {
         return (
             <View
                 style={styles.container}
@@ -90,5 +104,69 @@ export default class Post extends Component {
             : <View/>}
             </View>
         );
+    
+    }*/
+
+    renderTags = (tags) => {
+        return (
+          <View style={{marginTop:20,marginBottom:5,flexDirection:'row'}}>
+            {tags.map(item => {
+              return (
+                <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}}>
+                  {item}
+                </Text>
+              )
+            })}
+          </View>
+        );
+      };
+    
+    render(){
+        return (
+            this.state.post === null ? 
+                <View>
+                </View>
+                :
+                <View style={styles.container}>
+                    <Text style={{fontSize:18,}}>
+                        {this.state.post.post_summary.user_info.last_name}
+                    </Text>
+                    
+                    <Text style={{fontSize:12,color:'grey',marginTop:8}}>
+                        {this.epochToTime(this.state.post.post_summary.timestamp_create)}
+                    </Text>
+
+                    {this.renderTags(this.state.post.post_summary.tags)}
+
+                    <Text style={{fontWeight:'900',fontSize:18,fontFamily:'TimesNewRomanPS-BoldMT'}}>
+                        {this.state.post.post_summary.title}
+                    </Text>
+
+                    <Text style={{fontSize:17,marginTop:20,fontFamily:'Times New Roman'}}>
+                        {this.state.post.content}
+                    </Text>
+
+                    <FlatList
+                        data={this.state.answers}
+                        renderItem={({item}) => this._renderAnswer(item)}
+                        keyExtractor={item => item.answer_id}
+                    />
+                    <Button
+                        onPress={() => this.navigation.navigate('AnswerPage',
+                        {post_id: this.state.post.post_summary.post_id})} 
+                        title="add your answer" 
+                        style={styles.buttonText}
+                    />
+                </View>
+        );
+        
     }
 }
+
+
+const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        padding:20
+    }
+});
