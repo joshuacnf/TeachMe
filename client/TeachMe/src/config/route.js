@@ -1,6 +1,8 @@
-import { createBottomTabNavigator, createStackNavigator, createAppContainer,
-    createSwitchNavigator } from 'react-navigation';
-import React, {Component} from 'react';
+import {
+  createBottomTabNavigator, createStackNavigator, createAppContainer,
+  createSwitchNavigator
+} from 'react-navigation';
+import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 import Register from '../screens/Register'
@@ -25,7 +27,7 @@ const HomeScreenStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="home" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        return <Icon name="home" size={30} color={focused ? '#2196F3' : '#808080'} />
       }
     }
   }
@@ -34,12 +36,12 @@ const HomeScreenStack = createStackNavigator(
 const AddPostStack = createStackNavigator(
   {
     AddPostScreen: PostPage,
-    SelectTagsScreen: SelectTagsPage,    
+    SelectTagsScreen: SelectTagsPage,
   },
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="plus" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        return <Icon name="plus" size={30} color={focused ? '#2196F3' : '#808080'} />
       },
     }
   }
@@ -53,7 +55,7 @@ const IMScreenStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="bubbles" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        return <Icon name="bubbles" size={30} color={focused ? '#2196F3' : '#808080'} />
       }
     }
   }
@@ -67,7 +69,7 @@ const ProfileScreenStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="user" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        return <Icon name="user" size={30} color={focused ? '#2196F3' : '#808080'} />
       }
     }
   }
@@ -76,24 +78,30 @@ const ProfileScreenStack = createStackNavigator(
 const RankScreenStack = createStackNavigator(
   {
     RankScreen: Rank,
-    OtherProfileScreen: OtherProfilePage,    
+    OtherProfileScreen: OtherProfilePage,
   },
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="trophy" size={20} color={focused ? '#2196F3' : '#808080'}/>
+        return <Icon name="trophy" size={30} color={focused ? '#2196F3' : '#808080'} />
       },
     }
   }
 )
 
 const AppSwitch = createBottomTabNavigator({
-    HomeScreen: HomeScreenStack,
-    AddPostScreen: AddPostStack,
-    IMScreen: IMScreenStack,
-    ProfileScreen: ProfileScreenStack,
-    RankScreen: RankScreenStack,
-});
+  HomeScreen: HomeScreenStack,
+  AddPostScreen: AddPostStack,
+  IMScreen: IMScreenStack,
+  ProfileScreen: ProfileScreenStack,
+  RankScreen: RankScreenStack,
+},
+  {
+    tabBarOptions: {
+      showLabel: false,
+    }
+  }
+);
 
 const AuthStack = createStackNavigator({
   SignIn: Login,
