@@ -28,48 +28,13 @@ class OtherProfilePage extends Component{
         }
     }
 
-    selectPhotoTapped() {
-        console.log("hhh");
-        const options = {
-          quality: 1.0,
-          maxWidth: 500,
-          maxHeight: 500,
-          storageOptions: {
-            skipBackup: true
-          }
-        };
-
-        ImagePicker.showImagePicker(options, (response) => {
-          console.log('Response = ', response);
-
-          if (response.didCancel) {
-            console.log('User cancelled photo picker');
-          }
-          else if (response.error) {
-            console.log('ImagePicker Error: ', response.error);
-          }
-          else if (response.customButton) {
-            console.log('User tapped custom button: ', response.customButton);
-          }
-          else {
-            let source = { uri: response.uri };
-
-            // You can also display the image using data:
-            // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-            this.setState({
-              imageSource: source
-            });
-          }
-        });
-    }
 
     render(){
         console.log(this.props)
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => this.selectPhotoTapped()}>
+                    <TouchableOpacity>
                     {this.state.imageSource === null ?
                         <Image
                             source={require('../../images/default.png')}

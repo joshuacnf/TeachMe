@@ -18,7 +18,7 @@ class Rank extends Component {
     }
 
     componentWillMount() {
-        axios.get('http://18.221.224.217:8080/get/rank', {params: {user_id: this.props.userInfo.user_id}})
+        axios.get('http://18.221.224.217:8080/get/leaderboard', {params: {user_id: this.props.userInfo.user_id}})
             .then(res => {
                 this.setState({rank_info: res.data});
             })
@@ -55,9 +55,9 @@ class Rank extends Component {
     renderItem = item => {
       return (
         <View style={{ height: 70 }}>
-        <TouchableOpacity onPress = {()=>this.showProfile(item.userInfo)}>
+        <TouchableOpacity onPress = {()=>this.showProfile(item)}>
           <ListItem
-            name={item.userInfo.user_firstname + ' ' + item.userInfo.user_lastname}
+            name={item.user_firstname + ' ' + item.user_lastname}
             titleStyle={{ fontWeight: 'bold' }}
             // subtitle={item.content}
             // rightSubtitle={`${item.contact_info.first_name} ${item.contact_info.last_name}`}
@@ -89,7 +89,7 @@ class Rank extends Component {
 
                 <FlatList
                   data={this.state.rank_info}
-                  keyExtractor={item => item.user_info.user_id}
+                  keyExtractor={item => item.user_id}
                   renderItem={({ item }) => this.renderItem(item)}
                   ItemSeparatorComponent={this.renderSeparator}
                 />
