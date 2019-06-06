@@ -12,6 +12,7 @@ import AnswerPage from "../screens/AnswerPage"
 import SelectTagsPage from "../screens/SelectTagsPage/SelectTagsPage"
 import Post from "../screens/Post"
 import ChatPage from '../screens/ChatPage/ChatPage';
+import ContactPage from '../screens/ContactPage'
 import Rank from '../screens/Rank'
 import OtherProfilePage from '../screens/OtherProfilePage'
 
@@ -44,9 +45,10 @@ const AddPostStack = createStackNavigator(
   }
 )
 
-const ChatScreenStack = createStackNavigator(
+const IMScreenStack = createStackNavigator(
   {
-    ChatScreen: ChatPage
+    ContactScreen: ContactPage,
+    ChatScreen: ChatPage,
   },
   {
     navigationOptions: {
@@ -60,6 +62,7 @@ const ChatScreenStack = createStackNavigator(
 const ProfileScreenStack = createStackNavigator(
   {
     ProfileScreen: ProfilePage,
+    ChatScreen: ChatPage,
   },
   {
     navigationOptions: {
@@ -70,7 +73,7 @@ const ProfileScreenStack = createStackNavigator(
   }
 )
 
-const RankScreentStack = createStackNavigator(
+const RankScreenStack = createStackNavigator(
   {
     RankScreen: Rank,
     OtherProfileScreen: OtherProfilePage,    
@@ -87,9 +90,9 @@ const RankScreentStack = createStackNavigator(
 const AppSwitch = createBottomTabNavigator({
     HomeScreen: HomeScreenStack,
     AddPostScreen: AddPostStack,
-    ChatScreen: ChatScreenStack,
+    IMScreen: IMScreenStack,
     ProfileScreen: ProfileScreenStack,
-    RankScreen: RankScreentStack,
+    RankScreen: RankScreenStack,
 });
 
 const AuthStack = createStackNavigator({
