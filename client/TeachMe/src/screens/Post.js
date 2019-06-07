@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Button, FlatList,StyleSheet } from 'react-native';
+import { View, Text, Button, FlatList,StyleSheet,Image } from 'react-native';
 import { Card } from 'react-native-elements';
 
 //import styles from './style'
@@ -109,7 +109,7 @@ export default class Post extends Component {
 
     renderTags = (tags) => {
         return (
-          <View style={{marginTop:20,marginBottom:5,flexDirection:'row'}}>
+          <View style={{marginTop:15,marginBottom:5,flexDirection:'row'}}>
             {tags.map(item => {
               return (
                 <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}}>
@@ -128,21 +128,31 @@ export default class Post extends Component {
                 </View>
                 :
                 <View style={styles.container}>
-                    <Text style={{fontSize:18,}}>
-                        {this.state.post.post_summary.user_info.last_name}
-                    </Text>
-                    
-                    <Text style={{fontSize:12,color:'grey',marginTop:8}}>
-                        {this.epochToTime(this.state.post.post_summary.timestamp_create)}
-                    </Text>
 
+                    <View style={{flexDirection:'row'}}>
+                        <Image
+                            source={require('../images/default.png')}
+                            style={styles.userImage}
+                        />  
+                        <View style={{marginLeft:10}}>
+                            <Text style={{fontSize:18,}}>
+                                {this.state.post.post_summary.user_info.last_name}
+                            </Text>
+                
+                            <Text style={{fontSize:12,color:'grey',marginTop:8}}>
+                                {this.epochToTime(this.state.post.post_summary.timestamp_create)}
+                            </Text>
+                        </View>
+                    </View>
+                    
                     {this.renderTags(this.state.post.post_summary.tags)}
 
-                    <Text style={{fontWeight:'900',fontSize:18,fontFamily:'TimesNewRomanPS-BoldMT'}}>
+                    <Text style={{fontWeight:'700',fontSize:24}}>
                         {this.state.post.post_summary.title}
                     </Text>
 
-                    <Text style={{fontSize:17,marginTop:20,fontFamily:'Times New Roman'}}>
+                
+                    <Text style={{fontSize:19,marginTop:10}}>
                         {this.state.post.content}
                     </Text>
 
@@ -167,6 +177,13 @@ export default class Post extends Component {
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        padding:20
+        padding:15
+    },
+    userImage:{
+        borderRadius: 24,
+        width:48,
+        height:48,
+        borderWidth:0.5,
+        borderColor: 'grey',
     }
 });
