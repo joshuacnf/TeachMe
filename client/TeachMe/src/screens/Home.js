@@ -107,7 +107,7 @@ class Home extends Component {
 
     renderItem = item => {
       return (
-        <View style={{marginTop:5,paddingLeft:5,paddingBottom:3}}>
+        <View style={{marginTop:5,paddingLeft:8,paddingBottom:3}}>
           <TouchableOpacity onPress={() => this.showPost(item.post_id)} >
             {item.tags.length >0 ? this.renderTags(item.tags): null}
             <Text style={{fontSize:18,fontWeight:'bold'}}>{item.title}</Text>
