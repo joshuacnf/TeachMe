@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },  
     header:{
-        flex:0.35,
+        flex:0.38,
         paddingTop:15,
         alignItems: 'center',
     },
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
             height:45, 
     },
    row:{
-       paddingTop:50,
+       paddingTop:20,
        width:'100%',
        borderBottomColor: 'grey',
        borderBottomWidth: 0.35,

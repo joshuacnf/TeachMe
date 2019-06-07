@@ -274,7 +274,7 @@ class ProfilePage extends Component {
           }
         </View>
 
-        <View style={{ flex: 0.65}}>
+        <View style={{ flex: 0.62}}>
           <View style={styles.row}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>Past Posts</Text>
           </View>
