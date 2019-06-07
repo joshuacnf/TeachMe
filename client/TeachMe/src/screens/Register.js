@@ -46,12 +46,14 @@ export default class Register extends Component {
                     value={this.state.text}
                     placeholder="First Name"
                     style={styles.input}
+                    autoCorrect = 'none'
                 />
                 <TextInput
                     onChangeText={(lastname) => this.setState({lastname})}
                     value={this.state.text}
                     placeholder="Last Name"
                     style={styles.input}
+                    autoCorrect = 'none'
                 />
                 <TextInput
                     onChangeText={(email) => this.setState({email})}
@@ -65,6 +67,8 @@ export default class Register extends Component {
                     value={this.state.text}
                     placeholder="Password"
                     style={styles.input}
+                    autoCorrect = 'none'
+                    secureTextEntry
                 />
                 <TouchableOpacity
                   title="Sign Up"
