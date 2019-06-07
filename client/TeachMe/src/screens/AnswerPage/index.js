@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View,Text,TextInput,Button,TouchableOpacity} from 'react-native';
-import {styles} from './styles';
 import axios from 'axios';
+import {styles} from './styles';
 import { connect } from "react-redux";
 
 class AnswerPage extends Component{
@@ -52,18 +52,20 @@ class AnswerPage extends Component{
                     onChangeText={(content) => this.setState({content})}
                     value={this.state.content}
                 />
-                <View style={{flexDirection:'row-reverse'}}>
+                <View style={{flex:1,justifyContent:'flex-end',marginBottom:5}}>
                     <TouchableOpacity
-                        style={styles.postButton}
+                        style={styles.uploadBtn}
                         onPress={() => this._answer()}
                     >
-                        <Text style={{fontSize:20,color:'black'}}>Answer</Text>
+                        <Text style={{fontSize:20,color:'white'}}>Answer</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         );
     }
 }
+
+
 
 function mapStateToProps(state) {
     return { userInfo: state.reducers.userInfo };
