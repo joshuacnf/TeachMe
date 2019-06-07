@@ -85,17 +85,19 @@ export default class Post extends Component {
         const user_id = answer.user_info.user_id;
         return (
             <View style={styles.answer}>
-                {(user_id in this.state.pic_cache) ?
-                    <Image 
-                        source={{uri:this.state.pic_cache[user_id]}}
-                        style={styles.answerImage}
-                    />
-                    :
-                    <Image 
-                        source={require('../images/default.png')} 
-                        style={styles.answerImage}
-                    />
-                }
+                <TouchableOpacity onPress={()=> this.navigation.navigate("PostProfileScreen",{user_id: user_id})}>
+                    {(user_id in this.state.pic_cache) ?
+                        <Image 
+                            source={{uri:this.state.pic_cache[user_id]}}
+                            style={styles.answerImage}
+                        />
+                        :
+                        <Image 
+                            source={require('../images/default.png')} 
+                            style={styles.answerImage}
+                        />
+                    }
+                </TouchableOpacity>
 
                 <View>
                     <Text style={{color:'grey'}}>
