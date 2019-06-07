@@ -61,8 +61,8 @@ class Rank extends Component {
       })
   }
 
-  showProfile = userInfo => {
-    this.navigation.navigate('OtherProfileScreen', { userInfo: userInfo });
+  showProfile = user_id => {
+    this.navigation.navigate('OtherProfileScreen', { user_id: user_id });
   }
 
   // styles = StyleSheet.create({
@@ -84,7 +84,7 @@ class Rank extends Component {
   renderItem = item => {
     return (
       <View style={{ marginTop: 5, paddingLeft: 5, paddingBottom: 3 }}>
-        <TouchableOpacity onPress={() => this.showProfile(item)} >
+        <TouchableOpacity onPress={() => this.showProfile(item.user_id)} >
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.first_name + " " + item.last_name}</Text>
           <Text style={{ color: '#a9a9a9', fontWeight: '400', marginTop: 10 }}>
             {item.score}
