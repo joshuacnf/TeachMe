@@ -37,9 +37,16 @@ def intersection(A, B):
     C = [x for x in A if x in B]
     return C
 
-def union(A, B): 
-    final_list = list(set(A) | set(B)) 
-    return final_list 
+def union(A, B):
+    d = {}
+    for x in A:
+        d[x['post_summary']['post_id']] = x
+    for x in B:
+        d[x['post_summary']['post_id']] = x
+    final_list = []
+    for k, v in d.items():
+        final_list.append(v)
+    return final_list
 
 def generate_rand_string(len):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=len))
@@ -187,7 +194,7 @@ async def get_profile(request):
 async def get_post_summary_list(request):
     query = get_request_query(request)
     user_id = query['user_id'][0]
-    keyword = '' if 'keyword' not in query else query['keyword'][0]    
+    keyword = '' if 'keyword' not in query else query['keyword'][0]
 
     inst = db_user.find_one({'_id': ObjectId(user_id)})['institution']
 
@@ -197,7 +204,7 @@ async def get_post_summary_list(request):
                 'post_summary.timestamp_update', pymongo.DESCENDING) ]
         return web.Response(status=200, text=json.dumps(result))
 
-    keywords = (' '.join(keyword.split())).split()    
+    keywords = (' '.join(keyword.split())).split()
 
     result = []
     for k in keywords:
@@ -214,6 +221,10 @@ async def get_post_summary_list(request):
 
     result.sort(key=lambda x: x['timestamp_update'],
         reverse=True)
+
+    # print('=====================result=========================')
+    # print(result)
+    # print('================================================')
 
     return web.Response(status=200, text=json.dumps(result))
 
