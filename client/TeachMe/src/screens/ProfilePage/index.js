@@ -78,8 +78,8 @@ class ProfilePage extends Component {
     })
   }
 
-  startChat() {
-    this.navigation.navigate('ChatScreen');
+  startChat = contact_id => {
+    this.navigation.navigate('ChatScreen', {contact_id: contact_id});
   }
 
   selectPhotoTapped() {
@@ -155,7 +155,7 @@ class ProfilePage extends Component {
           {this.state.other_user && 
             <TouchableOpacity
                 style={styles.sendMessage}
-                onPress={() => this.startChat()}
+                onPress={() => this.startChat(this.state.userId)}
             >
                 <Text style={{ color: 'white', fontSize: 20 }}>Send Message</Text>
             </TouchableOpacity>
