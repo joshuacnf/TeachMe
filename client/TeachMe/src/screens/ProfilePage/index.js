@@ -56,6 +56,18 @@ class ProfilePage extends Component {
       this.fetchData();
     }
   }
+  
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 4,
+          width: "100%",
+          backgroundColor: "#D3D3D3",
+        }}
+      />
+    );
+  }
 
   fetchData = async () => {
     axios.get('http://18.221.224.217:8080/get/profile', {
@@ -247,7 +259,7 @@ class ProfilePage extends Component {
 
         <View style={{ flex: 0.5 }}>
           <View style={styles.row}>
-            <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>View past posts</Text>
+            <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>Past Posts</Text>
           </View>
           <FlatList
             data={this.state.posts}

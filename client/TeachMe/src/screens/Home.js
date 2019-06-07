@@ -36,28 +36,21 @@ class Home extends Component {
     this.setState({ refreshing: true })
     axios.get('http://18.221.224.217:8080/get/post_summary_list', {
       params: {
-        user_id: this.props.userInfo.user_id
+        user_id: this.props.userInfo.user_id,
+        keyword: this.state.keyword ? this.state.keyword : ''
       }
     }).then(res => {
         this.setState({ refreshing: false })
         this.setState({ data: res.data });
+        console.log("++++++++++++++++++++++++")
+        console.log(res.data)
       })
   }
 
-  fetchSearchResults = async () => {
-    this.setState({ refreshing: true })
-    axios.get('http://18.221.224.217:8080/get/post_summary_list', {
-      params: {
-        keyword: this.state.keyword
-      }
-    }).then(res => {
-        this.setState({ refreshing: false })
-        this.setState({ data: res.data });
-      })
-  }
-
-  _updateSearch = search => {
-    this.setState({ search });
+  _updateSearch = keyword => {
+    this.setState({ keyword }, function() {
+      this.fetchData()
+    });
   }
 
   showPost = post_id => {
@@ -146,12 +139,13 @@ class Home extends Component {
     }
 
   render() {
+    const { keyword } = this.state
     return (
       <View style={{ flex: 1 }}>
         <SearchBar
           placeholder="Type Here..."
           onChangeText={this._updateSearch}
-          value={this.state.keyword}
+          value={keyword}
           style={styles.search}
         />
         <FlatList
