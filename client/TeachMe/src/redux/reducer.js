@@ -16,7 +16,7 @@ const initialState = {
         action.userInfo = Object.assign({}, state.userInfo, action.userInfo);
         return Object.assign({}, state, { userInfo: action.userInfo });
       case 'CLEAR_REDUX_STORE':
-        return { userInfo: initialState };
+        return { userInfo:{} };
       default:
         return state;
     }

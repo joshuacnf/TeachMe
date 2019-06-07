@@ -56,7 +56,7 @@ class ProfilePage extends Component {
       this.fetchData();
     }
   }
-  
+
   /*renderSeparator = () => {
     return (
       <View
@@ -154,7 +154,11 @@ class ProfilePage extends Component {
     );
   };
 
-  
+  logOut() {
+    this.props.clearReduxStore()
+    console.log(this.props.userInfo)
+    this.navigation.navigate("SignIn")
+  }
 
 
   renderTags = (tags) => {
@@ -268,7 +272,7 @@ class ProfilePage extends Component {
             </TouchableOpacity>
           }
           {!this.state.other_user && 
-            <TouchableOpacity style={styles.sendMessage} onPress={() => this.navigation.navigate("SignIn")}>
+            <TouchableOpacity style={styles.sendMessage} onPress={() => this.logOut()}>
               <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Logout</Text>
             </TouchableOpacity>
           }
