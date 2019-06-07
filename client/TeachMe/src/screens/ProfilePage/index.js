@@ -254,7 +254,7 @@ class ProfilePage extends Component {
             <Text style={styles.userEmail}>
               {this.state.userInfo.email}
             </Text>:
-            <Text style={styles.userEmail}>
+            <Text style={styles.user}>
               {this.props.userInfo.email}
             </Text>
           }
@@ -274,7 +274,7 @@ class ProfilePage extends Component {
           }
         </View>
 
-        <View style={{ flex: 0.7 }}>
+        <View style={{ flex: 0.65}}>
           <View style={styles.row}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>Past Posts</Text>
           </View>
