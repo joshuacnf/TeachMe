@@ -14,6 +14,7 @@ class ChatPage extends Component {
   constructor(props) {
     super();
     this.navigation = props.navigation;
+    console.log(props);
     this.state = {
       messages: [],
       contact_id: props.navigation.state.params.contact_id,
@@ -47,6 +48,7 @@ class ChatPage extends Component {
       user_info: this.props.userInfo,
     })
     this.props.navigation.addListener('willFocus', this.fetchData)
+    setInterval(this.fetchData, 2000);
   }
 
   fetchData = async () => {

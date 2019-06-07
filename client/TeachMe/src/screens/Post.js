@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Button, FlatList,StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Card } from 'react-native-elements';
 
 //import styles from './style'
