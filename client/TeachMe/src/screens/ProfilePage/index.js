@@ -57,7 +57,7 @@ class ProfilePage extends Component {
     }
   }
   
-  renderSeparator = () => {
+  /*renderSeparator = () => {
     return (
       <View
         style={{
@@ -67,7 +67,7 @@ class ProfilePage extends Component {
         }}
       />
     );
-  }
+  }*/
 
   fetchData = async () => {
     axios.get('http://18.221.224.217:8080/get/profile', {
@@ -139,7 +139,10 @@ class ProfilePage extends Component {
 
   renderItem = item => {
     return (
-      <View style={{marginTop:5,paddingLeft:8,paddingBottom:3}}>
+      <View style={{
+          marginTop:5,paddingLeft:8,paddingBottom:3,borderBottomColor:'#D3D3D3',
+          borderBottomWidth: 0.8,
+        }}>
         <TouchableOpacity onPress={() => this.showPost(item.post_id)} >
           {item.tags.length >0 ? this.renderTags(item.tags): null}
           <Text style={{fontSize:18,fontWeight:'bold'}}>{item.title}</Text>
@@ -151,12 +154,16 @@ class ProfilePage extends Component {
     );
   };
 
+  
+
+
   renderTags = (tags) => {
     return (
       <View style={{marginTop:2,marginBottom:5,flexDirection:'row'}}>
         {tags.map(item => {
           return (
-            <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}} key={item}>
+            <Text style={{backgroundColor:'#F5F5F5',padding:5,
+                  fontSize:12,color:'grey',marginRight: 8}} key={item}>
               {item}
             </Text>
           )
@@ -242,6 +249,16 @@ class ProfilePage extends Component {
             </Text>
           }
 
+          {this.state.other_user ?
+            this.state.userInfo && 
+            <Text style={styles.userEmail}>
+              {this.state.userInfo.email}
+            </Text>:
+            <Text style={styles.userEmail}>
+              {this.props.userInfo.email}
+            </Text>
+          }
+
           {this.state.other_user && 
             <TouchableOpacity
                 style={styles.sendMessage}
@@ -257,7 +274,7 @@ class ProfilePage extends Component {
           }
         </View>
 
-        <View style={{ flex: 0.5 }}>
+        <View style={{ flex: 0.7 }}>
           <View style={styles.row}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>Past Posts</Text>
           </View>
@@ -265,10 +282,10 @@ class ProfilePage extends Component {
             data={this.state.posts}
             keyExtractor={item => item.post_id}
             renderItem={({ item }) => this.renderItem(item)}
-            ItemSeparatorComponent={this.renderSeparator}
+            // ItemSeparatorComponent={this.renderSeparator}
             onRefresh={() => this.fetchPosts()}
             refreshing={this.state.refreshing}
-            style={{marginHorizontal:20}}
+            style={{marginHorizontal:20,height:100}}
           />
 
           {/* <View style={styles.row}>

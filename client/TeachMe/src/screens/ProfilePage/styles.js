@@ -6,37 +6,42 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },  
     header:{
-        flex:0.5,
+        flex:0.3,
         paddingTop:15,
         alignItems: 'center',
     },
     userImage:{
-        borderRadius: 65,
-        width:130,
-        height:130,
+        borderRadius: 50,
+        width:100,
+        height:100,
         borderWidth:0.5,
         borderColor: 'grey',
     },
     userName:{
-        marginTop:20,
-        fontSize:25,
-        color:'grey'
+        marginTop:10,
+        fontSize:20,
+        color:'black'
     },
+    userEmail:{
+        marginTop:5,
+        fontSize:15,
+        color:'grey',
+    },  
     sendMessage:{
-            marginTop:20,
+            marginTop:15,
             backgroundColor:'#1a8cff',
             alignItems: 'center',
             width:'90%',
             borderRadius: 23,
             justifyContent:'center',
-            height:45
-        
+            height:45, 
     },
    row:{
+       marginTop:70,
        width:'100%',
-       height:50,
+       height:30,
        borderBottomColor: 'grey',
-       borderBottomWidth: 0.25,
+       borderBottomWidth: 0.35,
        justifyContent:'center',
        alignItems:'center'
    } 

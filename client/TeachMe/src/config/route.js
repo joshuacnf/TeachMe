@@ -96,8 +96,8 @@ const AppSwitch = createBottomTabNavigator({
   HomeTab: HomeTabStack,
   IMTab: IMTabStack,
   AddPostTab: AddPostTabStack,
-  ProfileTab: ProfileTabStack,
   RankTab: RankTabStack,
+  ProfileTab: ProfileTabStack,
 },
   {
     tabBarOptions: {

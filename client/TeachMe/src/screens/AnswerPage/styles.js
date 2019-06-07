@@ -17,7 +17,9 @@ const styles = StyleSheet.create({
           fontSize:18,
           marginTop:15,
           width:'100%',
-          height:240
+          height:280,
+          borderBottomColor: '#DCDCDC',
+          borderBottomWidth: 0.8,
       },
       tagArea:{
           marginTop:15

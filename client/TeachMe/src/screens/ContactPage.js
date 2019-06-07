@@ -23,9 +23,14 @@ class ContactPage extends Component {
   componentWillMount() {
     this.setState({ refreshing: true })
     this.props.navigation.addListener('willFocus', this.fetchData)
+    setInterval(this.fetchData, 1000)
   }
 
   fetchData = async () => {
+    /*
+    this.setState({
+      refreshing: true,
+    });*/
     res1 = await axios.get('http://18.221.224.217:8080/get/chat_summary_list', {
       params: {
         user_id: this.props.userInfo.user_id
@@ -40,7 +45,7 @@ class ContactPage extends Component {
     for (var i = 0; i < l; i++) {
       pic_id = res1.data[i].contact_info.pic_id;
       user_id = res1.data[i].contact_info.user_id;
-      if (pic_id !== undefined && pic_id != "") {
+      if (pic_id !== undefined && pic_id != "" && (!(user_id in this.state.pic_cache))) {
         res2 = await axios.get('http://18.221.224.217:8080/get/pic', {
           params: {
             pic_id: pic_id
@@ -66,7 +71,7 @@ class ContactPage extends Component {
 
   render() {
     return (
-      <View >
+      <View style={{flex:1}}>
         <FlatList
           data={this.state.data}
           keyExtractor={x => x.contact_info.user_id}

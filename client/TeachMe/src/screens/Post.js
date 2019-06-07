@@ -100,13 +100,18 @@ export default class Post extends Component {
                 </TouchableOpacity>
 
                 <View>
-                    <Text style={{color:'grey'}}>
+                    <Text style={{}}>
                         {answer.user_info.first_name+' '+answer.user_info.last_name}
                     </Text>
 
                     <Text style={{fontSize:17,marginTop:6}}>
                         {answer.content}
                     </Text>
+
+                    <Text style={{color:'grey',marginTop:6}}>
+                        {this.epochToTime(answer.timestamp_create)}
+                    </Text>
+
                 </View>
                    
             </View>
@@ -185,10 +190,16 @@ export default class Post extends Component {
                         {this.state.post.post_summary.title}
                     </Text>
 
-                
-                    <Text style={{fontSize:19,marginTop:10}}>
-                        {this.state.post.content}
-                    </Text>
+                    <View style={{borderBottomWidth:2,borderBottomColor:'#DCDCDC',
+                                 paddingBottom:15}}>
+                        <Text style={{
+                            fontSize:19,marginTop:10,
+                            
+                        }}>
+                            {this.state.post.content}
+                        </Text>
+                    </View>
+                    
                     
                     <FlatList
                         style={{marginTop:15}}

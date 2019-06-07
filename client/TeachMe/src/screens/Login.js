@@ -73,9 +73,9 @@ class Login extends Component {
           <View style={styles.logoContainer}>
             <Image
               style={styles.logo}
-              source={require('../images/logo2.png')}
+              source={require('../images/logo4.jpg')}
             />
-            <Text style={styles.title}>An App made for online and offline tutoring</Text>
+            <Text style={styles.title}>TeachMe</Text>
           </View>
           <View style={styles.formContainer}>
             { this.state.showTheThing &&
@@ -140,14 +140,17 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 150,
-    height: 150
+    height: 150,
+     borderRadius: 150/2
   },
   title: {
-    color: '#000000',
-    marginTop: 10,
+    color: '#1a8cff',
+    marginTop: 20,
     width: 160,
     textAlign: 'center',
-    opacity: 0.9
+    opacity: 0.9,
+    fontSize: 25, fontWeight: 'bold'
+
   },
   input: {
     height: 40,
