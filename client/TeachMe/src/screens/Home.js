@@ -29,7 +29,7 @@ class Home extends Component {
 
   componentWillMount() {
     this.fetchData()
-    this.props.navigation.addListener('didFocus', this.fetchData)
+    this.props.navigation.addListener('willFocus', this.fetchData)
   }
 
   fetchData = async () => {

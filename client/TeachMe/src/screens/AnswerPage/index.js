@@ -15,7 +15,7 @@ class AnswerPage extends Component{
         console.log(props);
         this.navigation = props.navigation;
         this.state = {
-            user_id: props.userInfo.user_id,
+            user_id: '',
             post_id: props.navigation.state.params.post_id,
             content:'',
             pics:[],
@@ -23,9 +23,16 @@ class AnswerPage extends Component{
         };
     }
 
+    componentWillMount(){
+        this.setState({
+            user_id: this.props.userInfo.user_id
+        })
+    }
+
     _answer(){
         answer_content = {
-            user_id: this.state.user_id,
+            user_info: this.props.userInfo,
+            // user_id: this.state.user_id,
             post_id: this.state.post_id,
             content: this.state.content,
             pics: this.state.pics,
