@@ -249,6 +249,16 @@ class ProfilePage extends Component {
             </Text>
           }
 
+          {this.state.other_user ?
+            this.state.userInfo && 
+            <Text style={styles.userEmail}>
+              {this.state.userInfo.email}
+            </Text>:
+            <Text style={styles.userEmail}>
+              {this.props.userInfo.email}
+            </Text>
+          }
+
           {this.state.other_user && 
             <TouchableOpacity
                 style={styles.sendMessage}
@@ -264,7 +274,7 @@ class ProfilePage extends Component {
           }
         </View>
 
-        <View style={{ flex: 0.6 }}>
+        <View style={{ flex: 0.7 }}>
           <View style={styles.row}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>Past Posts</Text>
           </View>
