@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 import json
 import random
 import time
+import re
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -28,11 +29,17 @@ db_pic = db['pic']
 db_message = db['message']
 db_chat = db['chat_summary']
 
+db_post.create_index([('post_summary.title', pymongo.TEXT)])
+
 ########################### Helper Functions ###########################
 
 def intersection(A, B):
     C = [x for x in A if x in B]
     return C
+
+def union(A, B): 
+    final_list = list(set(A) | set(B)) 
+    return final_list 
 
 def generate_rand_string(len):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=len))
@@ -85,7 +92,7 @@ async def get_register(request):
     query = get_request_query(request)
     user_info = None if ('user_info' not in query) else query['user_info'][0]
     if user_info is None:
-        return web.Response(text='Invalid Registration Request')
+        return web.Response(status=400, text='Invalid Registration Request')
     user_info = json.loads(user_info)
 
     user_info['institution'] = parse_email_address(user_info['email'])
@@ -180,37 +187,40 @@ async def get_profile(request):
 async def get_post_summary_list(request):
     query = get_request_query(request)
     user_id = query['user_id'][0]
-    tags = [] if ('tags' not in query) else json.loads(query['tags'][0])
+    keyword = '' if 'keyword' not in query else query['keyword'][0]    
 
     inst = db_user.find_one({'_id': ObjectId(user_id)})['institution']
 
-    result = []
-    for tag in tags:
-        tmp = db_tag.find_one({'tag': tag})['post_ids']
-        if not result:
-            result = tmp
-        else:
-            result = interesection(result, tmp)
-
-    tmp = []
-    for idx in result:
-        x = db_post.find_one({'_id': ObjectId(idx),
-            'post_summary.user_info.institution': inst})
-        del x['_id']
-        tmp.append(x['post_summary'])
-    result = tmp
-
-    if not tags:
+    if keyword == '':
         result = [ x['post_summary'] for x in db_post.find(
             {'post_summary.user_info.institution': inst}).sort(
                 'post_summary.timestamp_update', pymongo.DESCENDING) ]
+        return web.Response(status=200, text=json.dumps(result))
+
+    keywords = (' '.join(keyword.split())).split()    
+
+    result = []
+    for k in keywords:
+        try:
+            exp = re.compile(k, re.I)
+        except:
+            continue
+        tmp = db_post.find({
+            'post_summary.title': {'$regex': exp},
+            'post_summary.user_info.institution': inst})
+        result = union(result, list(tmp))
+
+    result = [ doc['post_summary'] for doc in result ]
+
+    result.sort(key=lambda x: x['timestamp_update'],
+        reverse=True)
 
     return web.Response(status=200, text=json.dumps(result))
 
 @routes.get('/get/post_summary_list_of_user')
 async def get_post_summary_list(request):
     query = get_request_query(request)
-    user_id = query['user_id'][0]        
+    user_id = query['user_id'][0]
 
     result = [ x['post_summary'] for x in db_post.find(
         {'post_summary.user_info.user_id': user_id}).sort(
@@ -293,7 +303,7 @@ async def get_chat_summary_list(request):
     result = db_chat.find({'$or': [
         {'from': user_id},
         {'to': user_id}
-    ]}).sort('timestamp', pymongo.ASCENDING)
+    ]}).sort('timestamp', pymongo.DESCENDING)
 
     tmp = []
     result = list(result)
@@ -316,7 +326,7 @@ async def get_rank(request):
     query = get_request_query(request)
     user_id = query['user_id'][0]
 
-    user_info = db_user.find_one({'_id': ObjectId(user_id)})    
+    user_info = db_user.find_one({'_id': ObjectId(user_id)})
     inst = user_info['institution']
     tmp = db_user.find({'institution': inst, 'verified': True}).sort(
         'score', pymongo.DESCENDING)
@@ -388,6 +398,8 @@ async def post_answer(request):
     answer['pic_ids'] = []
     answer['timestamp_create'] = int(time.time() * 1000.0)
 
+    print('answer received: {}'.format(answer))
+
     if 'pics' in answer:
         for p in answer['pics']:
             doc = {'img64': p}
@@ -418,12 +430,12 @@ async def post_profile_pic(request):
 
     pic = await request.text()
 
-    print(user_id)
-    print('post_pic: {}'.format(pic))
+    # print(user_id)
+    # print('post_pic: {}'.format(pic))
 
     user_info = db_user.find_one({'_id': ObjectId(user_id)})
-    if 'pic_id' in user_info:
-        db_pic.replace_one({'_id': ObjectId(user_info['pic_id'])}, 
+    if ('pic_id' in user_info) and (user_info['pic_id'] != ''):
+        db_pic.replace_one({'_id': ObjectId(user_info['pic_id'])},
             {'b64': pic})
     else:
         doc = {'b64': pic}
