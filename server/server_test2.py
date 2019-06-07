@@ -100,15 +100,18 @@ def get_profile_test(user_info):
 def get_pic_test(pic_id, target_pic):
     url = url_prefix + '/get/pic?pic_id={}'.format(pic_id)
     res = requests.get(url=url)
-    print(res.status_code)
+    #print(res.status_code)
 
-    with open('tmp.jpg', 'wb') as f:
-        f.write(base64.decodestring(res.text.encode()))
+    if res.status_code != 200:
+        return res.status_code, res.text
+    else:
+        with open('tmp.jpg', 'wb') as f:
+            f.write(base64.decodestring(res.text.encode()))
     
-    os.system('diff tmp.jpg {}'.format(target_pic))
-    os.system('rm tmp.jpg')
+        os.system('diff tmp.jpg {}'.format(target_pic))
+        os.system('rm tmp.jpg')
 
-    return (res.status_code, res.text)
+        return (res.status_code, res.text)
 
 def get_chat_summary_list_test(user_id):
     url = url_prefix + '/get/chat_summary_list?user_id={}'.format(user_id)
@@ -165,11 +168,11 @@ def post_profile_pic_test(user_info, file_name):
     url = url_prefix + '/get/profile?email={}'.format(user_info['email'])
     res = requests.get(url=url)
     user_info = res.json()
-    print(res.status_code, res.text, user_info)
+    #print(res.status_code, res.text, user_info)
     url = url_prefix + '/post/profile_pic?user_id={}'.format(user_info['user_id'])
     pic_b64 = base64.encodestring(open(file_name, 'rb').read()).decode('ascii')
     res = requests.post(url=url, data=pic_b64)
-    print(res.status_code, res.text)
+    #print(res.status_code)
     return(res.status_code, res.text)
 
 def post_post_test(user_info, title='default title', tags=[],
@@ -232,6 +235,7 @@ def main():
     else:
         print("...passed")
 
+    print('Test 2: Not Institution Registeration -- Not Tested')
     # print('Test 2: Not Institution Registeration')
     # status, text = get_register_test(user_info2)
     # if status != 403 or text != 'Not Institution Email':
@@ -248,6 +252,8 @@ def main():
     else:
         print("...passed")
 
+
+    print('Test 4: Repeated Registeration -- Not Tested')
     '''
     print('Test 4: Repeated Registeration')
     status, text = get_register_test(user_info3)
@@ -304,9 +310,9 @@ def main():
     else:
         print("...passed")
 
-    '''
+    
     print('=================== Test Profile Picture Post =====================')
-    print('Test 8: Valid Profile Picture Post')
+    print('Test 10: Valid Profile Picture Post')
     status, text = post_profile_pic_test(profile, 'test_profile.jpg')
     if status != 200 or text != 'success (profile_pic)':
         error+=1
@@ -317,7 +323,7 @@ def main():
     
     print('=================== Test Picture Get =====================')
     print('Test 11: Not Existed Picture Request')
-    status, text = get_pic_test(profile['pic_id']+profile['pic_id'], 'test_profile.jpg')
+    status, text = get_pic_test('0123456789ab0123456789ab', 'test_profile.jpg')
     if status != 404 or text != 'No Result Found':
         error+=1
         print("Test 11 fails")
@@ -325,37 +331,35 @@ def main():
         print("...passed")
 
     print('Test 12: Valid Picture Request')
+    status, profile = get_profile_test(user_info3) # here profile will be used for other tests
     status, text = get_pic_test(profile['pic_id'], 'test_profile.jpg')
     if status != 200:
         error+=1
         print("Test 12 fails")
     else:
-        print("...passed")
-
-    get_pic_test(tmp['pic_id'], 'test_profile.jpg')
-    '''
+        print("...passed")    
 
     print('=================== Test Post Post =====================')
-    print('Test 14: Valid Post')
+    print('Test 13: Valid Post')
     status, text =  post_post_test(user_info=profile, title=post1_summary['title'],
         tags=post1_summary['tags'], content=post1['content'],)
     if status != 200 and text != 'success (post)':
+        error+=1
+        print("Test 13 fails")
+    else:
+        print("...passed")
+
+    print('=================== Test Post Summary Get =====================')
+    print('Test 14: Valid Post Summary List Get')
+    status, post_summaries = get_post_summary_list_test(user_id=profile['user_id'])
+    if status != 200:
         error+=1
         print("Test 14 fails")
     else:
         print("...passed")
 
-    print('=================== Test Post Summary Get =====================')
-    print('Test 15: Valid Post Summary List Get')
-    status, post_summaries = get_post_summary_list_test(user_id=profile['user_id'])
-    if status != 200:
-        error+=1
-        print("Test 15 fails")
-    else:
-        print("...passed")
-
     print('=================== Test Answer Post =====================')
-    print('Test 16+: Valid Answer Post')
+    print('Test 15+: Valid Answer Post')
     for post_summary in post_summaries:
         post_id = post_summary['post_id']
         # print(type(post_id))
@@ -364,56 +368,56 @@ def main():
             content=generate_rand_string(100))
         if status != 200 and text != 'success (answer)':
             error+=1
-            print("Test 16 fails")
+            print("Test 15 fails")
         else:
             print("...passed")
     
     print('=================== Test Post Get =====================')
-    print('Test 17: Not Existed Post Get')
+    print('Test 16: Not Existed Post Get')
     status, text = get_post_test('0123456789ab0123456789ab')
     if status != 404 or text != 'No Result Found':
         error+=1
-        print("Test 17 fails")
+        print("Test 16 fails")
     else:
         print("...passed")
 
-    print('Test 18+: Valid Post Get')
+    print('Test 17+: Valid Post Get')
     for post_summary in post_summaries:
         status, text = get_post_test(post_summary['post_id'])
         if status != 200:
             error+=1
-            print("Test 18 fails")
+            print("Test 17 fails")
         else:
             print("...passed")
 
     print('=================== Test Answer Get =====================')
-    print('Test 19: Not Existed Answer Get')
+    print('Test 18: Not Existed Answer Get')
     status, text = get_answer_test('0123456789ab0123456789ab')
     if status != 404 or text != 'No Result Found':
         error+=1
-        print("Test 19 fails")
+        print("Test 18 fails")
     else:
         print("...passed")
     
-    print('Test 20+: Valid Post Get')
+    print('Test 19+: Valid Post Get')
     for post_summary in post_summaries:
         status, text = get_post_test(post_summary['post_id'])
         for answer in text['answer_ids']:
             status, text = get_answer_test(answer)
             if status != 200:
                 error+=1
-                print("Test 20 fails")
+                print("Test 19 fails")
             else:
                 print("...passed")
 
     print('=================== Test Another User Post =====================')
-    print('Test 21+: Valid Post Post')
+    print('Test 20+: Valid Post Post')
     status, user_info = get_profile_test(user_info5)
     u = user_info['user_id']
     status, text = get_post_summary_list_test(user_id=u)
     if status != 200:
         error+=1
-        print("Test 21 fails")
+        print("Test 20 fails")
     else:
         print("...passed")
         #print(text)
@@ -423,66 +427,66 @@ def main():
     status, text = get_post_summary_list_test(user_id=u)
     if status != 200:
         error+=1
-        print("Test 21 fails")
+        print("Test 20 fails")
     else:
         print("...passed")
         #print(text)
 
     print('=================== Test Chat Post =====================')
-    print('Test 22: Valid Chat')
+    print('Test 21: Valid Chat')
     status, profile1 = get_profile_test(user_info3)
     status, profile2 = get_profile_test(user_info5)
     uid1, uid2 = profile1['user_id'], profile2['user_id']
     status, text = post_message_test(uid1, uid2, 'UCLA')
     if status != 200:
         error+=1
-        print("Test 22.1 fails")
+        print("Test 21.1 fails")
     else:
         print("...passed")
     status, text = post_message_test(uid2, uid1, 'USC')
     if status != 200:
         error+=1
-        print("Test 22.2 fails")
+        print("Test 21.2 fails")
     else:
         print("...passed")
     status, text = post_message_test(uid1, uid2, 'UCLA UCLA')
     if status != 200:
         error+=1
-        print("Test 22.3 fails")
+        print("Test 21.3 fails")
     else:
         print("...passed")
     status, text = post_message_test(uid1, uid2, 'UCLA UCLA UCLA')
     if status != 200:
         error+=1
-        print("Test 22.4 fails")
+        print("Test 21.4 fails")
     else:
         print("...passed")
 
     print('=================== Test Chat Get =====================')
-    print('Test 23: Valid Chat List Get')
+    print('Test 22: Valid Chat List Get')
     status, text = get_chat_summary_list_test(uid1)
     if status != 200:
         error+=1
-        print("Test 23 fails")
+        print("Test 22 fails")
     else:
         #print(text)
         print("...passed")
 
-    print('Test 24: Valid Chat List Get')
+    print('Test 23: Valid Chat List Get')
     status, text = get_chat_test(uid1, uid2)
     if status != 200:
         error+=1
-        print("Test 24 fails")
+        print("Test 23 fails")
     else:
         #print(text)
         print("...passed")
     
     print('=================== Test Rnak Get =====================')
-    print('Test 25: Valid Rank Get')
+    print('Test 24: Valid Rank Get')
     status, text = get_chat_summary_list_test(uid1)
     if status != 200:
         error+=1
-        print("Test 23 fails")
+        print("Test 24 fails")
     else:
         #print(text)
         print("...passed")
