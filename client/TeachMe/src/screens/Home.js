@@ -73,7 +73,9 @@ class Home extends Component {
         <View style={{marginTop:2,marginBottom:5,flexDirection:'row'}}>
           {tags.map(item => {
             return (
-              <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}} key={item}>
+              <Text style={{backgroundColor:'#F5F5F5',
+                    padding:5,fontSize:12,color:'grey',marginRight:8}} key={item}
+              >
                 {item}
               </Text>
             )

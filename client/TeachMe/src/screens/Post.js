@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { ScrollView,View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Card } from 'react-native-elements';
 
 //import styles from './style'
@@ -32,9 +32,30 @@ export default class Post extends Component {
                     .then(res => {
                         var joined = this.state.answers.concat(res.data);
                         this.setState({answers: joined});
+                        
+                        pic_id = res.data.user_info.pic_id;
+                        user_id = res.data.user_info.user_id;
+                        if(pic_id !== null && pic_id !== undefined && pic_id !== ""){
+                            if((!pic_id in this.state.imageDict)){
+                                
+                                axios.get('http://18.221.224.217:8080/get/pic', {
+                                    params: {
+                                        pic_id: pic_id
+                                    }
+                                }).then(res2 => {
+                                this.setState((prevState) => {return  {
+                                image_dict: {
+                                    ...prevState.imageDict,
+                                    [user_id]: res2.data,
+                                },
+                                }});
+           
+                                })
+                            }
+                        }
+
                     })
                 };
-
             })
     }
 
@@ -45,19 +66,30 @@ export default class Post extends Component {
             post_id: props.navigation.state.params.post_id,
             post: null,
             answers: [],
-            imageSource:null
+            imageSource:null,
+            imageDict:{}
         };
     }
 
-    _renderAnswer = answer =>{
-        console.log("~~~~~~~~~~~~~~~~~~answer")
+    _renderAnswer = answer => {
+        const user_id = answer.user_info.user_id;
         return (
-            <Card>
-                <Text>
-                    {answer.content}
+            <View style={styles.answer}>
+                {user_id in this.state.imageDict ?
+                    <Image source={{uri:this.state.imageDict[user_id]}} />
+                    :
+                    <Image source={require('../images/default.png')} />
+                }
+
+                <Text style={{color:'grey'}}>
+                    {answer.user_info.first_name+' '+answer.user_info.last_name}
                 </Text>
-            </Card>
-        )
+
+                <Text style={{fontSize:17,marginTop:6}}>
+                    {answer.content}
+                </Text>   
+            </View>
+        );
     }
 
     epochToTime = epoch => {
@@ -74,59 +106,13 @@ export default class Post extends Component {
       }
   
 
-    /*render() {
-        return (
-            <View
-                style={styles.container}
-            >
-                {this.state.post ?
-                <View>
-                <Card>
-                    <Text
-                        style={styles.title}
-                    >
-                        {this.state.post.post_summary.title}
-                    </Text>
-                    <Text
-                        style={styles.smalltext}
-                    >
-                        {this.state.post.post_summary.user_info.last_name}
-                    </Text>
-                    <Text
-                        style={styles.smalltext}
-                    >
-                        {this.state.post.post_summary.timestamp_update}
-                    </Text>
-                </Card>
-                <Card>
-                    <Text>
-                        {this.state.post.content}
-                    </Text>
-                </Card>
-                <FlatList
-                    data={this.state.answers}
-                    renderItem={({item}) => this._renderAnswer(item)}
-                    keyExtractor={item => item.answer_id}
-                />
-                <Button
-                    onPress={() => this.navigation.navigate('AnswerScreen',
-                    {post_id: this.state.post.post_summary.post_id})}
-                    title="add your answer"
-                    style={styles.buttonText}
-                />
-                </View>
-            : <View/>}
-            </View>
-        );
-    
-    }*/
 
     renderTags = (tags) => {
         return (
           <View style={{marginTop:15,marginBottom:5,flexDirection:'row'}}>
             {tags.map(item => {
               return (
-                <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}}>
+                <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey',marginRight:8}}>
                   {item}
                 </Text>
               )
@@ -141,11 +127,14 @@ export default class Post extends Component {
                 <View>
                 </View>
                 :
-                <View style={styles.container}>
+                <ScrollView style={styles.container} >
                     
 
                     <View style={{flexDirection:'row'}}>
                         
+                        <TouchableOpacity
+                            onPress={()=>this.navigation.navigate("PostProfileScreen",{user_id: this.state.post.post_summary.user_info.user_id})}
+                        >
                         {this.state.imageSource?
                             <Image
                                 source={this.state.imageSource}
@@ -156,10 +145,11 @@ export default class Post extends Component {
                                 style={styles.userImage}
                             />
                         }
+                        </TouchableOpacity>
                         
                         <View style={{marginLeft:10}}>
                             <Text style={{fontSize:18,}}>
-                                {this.state.post.post_summary.user_info.last_name}
+                                {this.state.post.post_summary.user_info.first_name+' '+this.state.post.post_summary.user_info.last_name}
                             </Text>
                 
                             <Text style={{fontSize:12,color:'grey',marginTop:8}}>
@@ -178,29 +168,36 @@ export default class Post extends Component {
                     <Text style={{fontSize:19,marginTop:10}}>
                         {this.state.post.content}
                     </Text>
-
-                    <FlatList
-                        data={this.state.answers}
-                        renderItem={({item}) => this._renderAnswer(item)}
-                        keyExtractor={item => item.answer_id}
-                    />
+                    
+                    
+                    {this.state.answers.map((answer) => this._renderAnswer(answer))}
+                        
+                    
                     <Button
                         onPress={() => this.navigation.navigate('AnswerScreen',
                         {post_id: this.state.post.post_summary.post_id})} 
                         title="add your answer" 
                         style={styles.buttonText}
                     />
-                </View>
+                </ScrollView>
         );
         
     }
 }
-
+/** 
+ * <FlatList
+                        style={{marginTop:15}}
+                        data={this.state.answers}
+                        renderItem={({item}) => this._renderAnswer(item)}
+                        keyExtractor={item => item.answer_id}
+                    />
+ */
 
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        padding:15
+        padding:15,
+        paddingRight:0
     },
     userImage:{
         borderRadius: 24,
@@ -208,5 +205,12 @@ const styles = StyleSheet.create({
         height:48,
         borderWidth:0.5,
         borderColor: 'grey',
+    },
+    answer:{
+        borderBottomColor:'#D3D3D3',
+        borderBottomWidth: 0.8,
+        paddingTop:12,
+        paddingBottom:10
+        
     }
 });
