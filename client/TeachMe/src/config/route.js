@@ -53,6 +53,7 @@ const IMTabStack = createStackNavigator(
   {
     ContactScreen: ContactPage,
     ChatScreen: ChatPage,
+    ProfileScreen: ProfilePage,
   },
   {
     navigationOptions: {
@@ -66,7 +67,7 @@ const IMTabStack = createStackNavigator(
 const ProfileTabStack = createStackNavigator(
   {
     ProfileScreen: ProfilePage,
-    ChatScreen: ChatPage,
+    ChatScreen: ChatPage,    
   },
   {
     navigationOptions: {
@@ -80,7 +81,7 @@ const ProfileTabStack = createStackNavigator(
 const RankTabStack = createStackNavigator(
   {
     RankScreen: Rank,
-    OtherProfileScreen: OtherProfilePage,
+    OtherProfileScreen: ProfilePage,
   },
   {
     navigationOptions: {

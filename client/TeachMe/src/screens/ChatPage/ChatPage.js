@@ -53,7 +53,7 @@ class ChatPage extends Component {
 
   fetchData = async () => {
     if (this.state.contact_info == '' || this.state.user_id == '') {
-      return 
+      return
     }
     axios.get(
       'http://18.221.224.217:8080/get/chat', {
@@ -73,11 +73,11 @@ class ChatPage extends Component {
             text: msgs[i].content,
             createdAt: new Date(msgs[i].timestamp),
             user: {
-              _id: 2,
+              _id: this.state.contact_info.user_id,
               name: `${this.state.contact_info.first_name} ${this.state.contact_info.last_name}`,
               // avatar: '',
             }
-          }          
+          }
           tmp.push(message)
           idx = idx + 1
         }
@@ -87,7 +87,7 @@ class ChatPage extends Component {
             text: msgs[i].content,
             createdAt: new Date(msgs[i].timestamp),
             user: {
-              _id: 1,
+              _id: this.state.user_info.user_id,
               name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
             }
           }
@@ -125,16 +125,21 @@ class ChatPage extends Component {
     }))
   }
 
+  onPressAvatar = user => {
+    this.navigation.navigate('ProfileScreen', {user_id: user._id});
+  }
+
   render() {
     return (
       <GiftedChat
         messages={this.state.messages}
         onSend={messages => this.onSend(messages)}
         user={{
-          _id: 1,
+          _id: this.state.user_info.user_id,
           name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
         }}
         showUserAvatar={true}
+        onPressAvatar={this.onPressAvatar}
         // renderUsernameOnMessage={true}
       />
     )
