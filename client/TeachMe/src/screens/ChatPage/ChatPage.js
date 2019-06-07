@@ -7,9 +7,10 @@ import axios from 'axios';
 import { connect } from "react-redux";
 
 class ChatPage extends Component {
-  static navigationOptions = {
-    title: 'Chat',
-  }
+  static navigationOptions = ({ navigation }) => {
+    const { params } = navigation.state;
+    return params;
+  };
 
   state = {
     messages: [],
@@ -33,7 +34,9 @@ class ChatPage extends Component {
     axios.get('http://18.221.224.217:8080/get/profile',
       { params: { user_id: this.state.contact_id } }
     ).then(res => {
-      this.setState({ contact_info: res.data });
+      const contact_info = res.data
+      this.props.navigation.setParams({title: `${contact_info.first_name} ${contact_info.last_name}` });      
+      this.setState({ contact_info: contact_info });
       const contact_pic_id = this.state.contact_info.pic_id
       const user_pic_id = this.state.user_info.pic_id
       if (contact_pic_id !== undefined && contact_pic_id !== "") {
@@ -73,7 +76,7 @@ class ChatPage extends Component {
       user_info: this.props.userInfo,
     })
     this.props.navigation.addListener('willFocus', this.fetchData)
-    setInterval(this.fetchData, 2000);
+    setInterval(this.fetchData, 1000);
   }
 
   fetchData = async () => {

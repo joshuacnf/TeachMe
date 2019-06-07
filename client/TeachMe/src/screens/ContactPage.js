@@ -7,7 +7,7 @@ import axios from 'axios'
 
 class ContactPage extends Component {
   static navigationOptions = {
-    title: 'Contact',
+    title: 'Conversation',
   }
 
   constructor(props) {
