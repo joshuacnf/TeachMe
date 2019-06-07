@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 
 class PostPage extends Component {
   static navigationOptions = {
-    title: "PostPage",
+    title: "Add New Post",
     // tabBarIcon: ({ focused }) => {
     //     return <Icon name="plus" size={20} color={focused ? '#2196F3' : '#808080'}/>
     // },

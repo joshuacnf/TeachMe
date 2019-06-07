@@ -7,6 +7,10 @@ import axios from 'axios';
 import { connect } from "react-redux";
 
 class ChatPage extends Component {
+  static navigationOptions = {
+    title: 'Chat',
+  }
+
   state = {
     messages: [],
   }

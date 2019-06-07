@@ -17,7 +17,6 @@ import Post from "../screens/Post"
 import ChatPage from '../screens/ChatPage/ChatPage';
 import ContactPage from '../screens/ContactPage'
 import Rank from '../screens/Rank'
-import OtherProfilePage from '../screens/OtherProfilePage'
 
 const HomeTabStack = createStackNavigator(
   {
@@ -67,7 +66,8 @@ const IMTabStack = createStackNavigator(
 const ProfileTabStack = createStackNavigator(
   {
     ProfileScreen: ProfilePage,
-    ChatScreen: ChatPage,    
+    ChatScreen: ChatPage,
+    PostScreen: Post
   },
   {
     navigationOptions: {
