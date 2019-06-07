@@ -73,7 +73,7 @@ class Login extends Component {
           <View style={styles.logoContainer}>
             <Image
               style={styles.logo}
-              source={require('../images/logo.jpg')}
+              source={require('../images/logo2.png')}
             />
             <Text style={styles.title}>An App made for online and offline tutoring</Text>
           </View>
@@ -139,8 +139,8 @@ const styles = StyleSheet.create({
     marginTop:20
   },
   logo: {
-    width: 200,
-    height: 200
+    width: 150,
+    height: 150
   },
   title: {
     color: '#000000',
@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
     color: 'red'
   },
   buttonContainer: {
+    marginBottom: 5,
     backgroundColor: '#1a8cff',
     paddingVertical: 15
   },

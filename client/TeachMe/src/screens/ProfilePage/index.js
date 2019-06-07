@@ -11,6 +11,8 @@ import ImagePicker from 'react-native-image-picker';
 import { connect } from "react-redux";
 import axios from 'axios';
 import { Avatar } from 'react-native-elements';
+import * as actionCreators from '../../redux/actions';
+import { bindActionCreators } from 'redux';
 
 class ProfilePage extends Component {
   static navigationOptions = {
@@ -32,6 +34,10 @@ class ProfilePage extends Component {
       posts: [],
     }
   }
+
+  changeReduxStore(userInfo) {
+    this.props.setUserInfo(userInfo);
+  };
 
   componentWillMount() {
     this.fetchData()
@@ -104,8 +110,7 @@ class ProfilePage extends Component {
 
   fetchPosts = async() => {
     this.setState({ refreshing: true })
-    // TODO: posts of this user 
-    axios.get('http://18.221.224.217:8080/get/post_summary_list', {
+    axios.get('http://18.221.224.217:8080/get/post_summary_list_of_user', {
       params: {
         user_id: this.state.userId
       }
@@ -186,8 +191,11 @@ class ProfilePage extends Component {
             { params: { user_id: this.props.userInfo.user_id } }
           ).then((res) => {
             if (res.status == 200) {
+              this.changeReduxStore()
               console.log("response", res);
               console.log("success upload image");
+              this.fetchData();
+              this.changeReduxStore(this.state.userInfo)
             }
           })
         }
@@ -230,6 +238,11 @@ class ProfilePage extends Component {
                 <Text style={{ color: 'white', fontSize: 20 }}>Send Message</Text>
             </TouchableOpacity>
           }
+          {!this.state.other_user && 
+            <TouchableOpacity style={styles.sendMessage} onPress={() => this.navigation.navigate("SignIn")}>
+              <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Logout</Text>
+            </TouchableOpacity>
+          }
         </View>
 
         <View style={{ flex: 0.5 }}>
@@ -249,12 +262,6 @@ class ProfilePage extends Component {
           {/* <View style={styles.row}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>View past answers</Text>
           </View> */}
-
-          {!this.state.other_user && 
-          <TouchableOpacity style={styles.row} onPress={() => this.navigation.navigate("SignIn")}>
-            <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>Logout</Text>
-          </TouchableOpacity>
-          }
         </View>
       </View>
     );
@@ -265,4 +272,8 @@ function mapStateToProps(state) {
   return { userInfo: state.reducers.userInfo };
 }
 
-export default connect(mapStateToProps)(ProfilePage);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(actionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
