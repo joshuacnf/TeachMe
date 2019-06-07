@@ -190,10 +190,16 @@ export default class Post extends Component {
                         {this.state.post.post_summary.title}
                     </Text>
 
-                
-                    <Text style={{fontSize:19,marginTop:10}}>
-                        {this.state.post.content}
-                    </Text>
+                    <View style={{borderBottomWidth:2,borderBottomColor:'#DCDCDC',
+                                 paddingBottom:15}}>
+                        <Text style={{
+                            fontSize:19,marginTop:10,
+                            
+                        }}>
+                            {this.state.post.content}
+                        </Text>
+                    </View>
+                    
                     
                     <FlatList
                         style={{marginTop:15}}
