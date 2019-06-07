@@ -24,15 +24,36 @@ class ChatPage extends Component {
       contact_id: props.navigation.state.params.contact_id,
       contact_info: '',
       user_info: '',
+      contact_pic: '',
+      user_pic: '',
     };
   }
 
   componentDidMount() {
     axios.get('http://18.221.224.217:8080/get/profile',
-      { params: {user_id: this.state.contact_id} }
+      { params: { user_id: this.state.contact_id } }
     ).then(res => {
-      console.log(res)
-      this.setState({contact_info: res.data});
+      this.setState({ contact_info: res.data });
+      const contact_pic_id = this.state.contact_info.pic_id
+      const user_pic_id = this.state.user_info.pic_id
+      if (contact_pic_id !== undefined && contact_pic_id !== "") {
+        axios.get('http://18.221.224.217:8080/get/pic',
+          { params: { pic_id: contact_pic_id } }
+        ).then(res2 => {
+          this.setState({
+            contact_pic: res2.data
+          })
+        })
+      }
+      if (user_pic_id !== undefined && user_pic_id !== "") {
+        axios.get('http://18.221.224.217:8080/get/pic',
+          { params: { pic_id: user_pic_id } }
+        ).then(res2 => {
+          this.setState({
+            user_pic: res2.data,
+          })
+        })
+      }
       this.fetchData();
     })
     this.setState({
@@ -59,48 +80,52 @@ class ChatPage extends Component {
     if (this.state.contact_info == '' || this.state.user_id == '') {
       return
     }
-    axios.get(
-      'http://18.221.224.217:8080/get/chat', {
-        params: {
-          user1_id: this.state.contact_info.user_id,
-          user2_id: this.state.user_info.user_id,
-        }
+    res = await axios.get('http://18.221.224.217:8080/get/chat', {
+      params: {
+        user1_id: this.state.contact_info.user_id,
+        user2_id: this.state.user_info.user_id,
       }
-    ).then(res => {
-      msgs = res.data
-      tmp = []
-      idx = 0
-      for (var i = 0; i < msgs.length; i++) {
-        if (msgs[i].from == this.state.contact_info.user_id) {
-          message = {
-            _id: idx,
-            text: msgs[i].content,
-            createdAt: new Date(msgs[i].timestamp),
-            user: {
-              _id: this.state.contact_info.user_id,
-              name: `${this.state.contact_info.first_name} ${this.state.contact_info.last_name}`,
-              // avatar: '',
-            }
+    })
+
+    msgs = res.data
+    tmp = []
+    idx = 0
+
+    msgs = res.data
+    tmp = []
+    idx = 0
+    for (var i = 0; i < msgs.length; i++) {
+      if (msgs[i].from == this.state.contact_info.user_id) {
+        message = {
+          _id: idx,
+          text: msgs[i].content,
+          createdAt: new Date(msgs[i].timestamp),
+          user: {
+            _id: this.state.contact_info.user_id,
+            name: `${this.state.contact_info.first_name} ${this.state.contact_info.last_name}`,
+            avatar: this.state.contact_pic,
           }
-          tmp.push(message)
-          idx = idx + 1
         }
-        if (msgs[i].from == this.state.user_info.user_id) {
-          message = {
-            _id: idx,
-            text: msgs[i].content,
-            createdAt: new Date(msgs[i].timestamp),
-            user: {
-              _id: this.state.user_info.user_id,
-              name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
-            }
-          }
-          tmp.push(message)
-          idx = idx + 1
-        }
+        tmp.push(message)
+        idx = idx + 1
       }
-      this.setState({ messages: tmp });
-    });
+      if (msgs[i].from == this.state.user_info.user_id) {
+        message = {
+          _id: idx,
+          text: msgs[i].content,
+          createdAt: new Date(msgs[i].timestamp),
+          user: {
+            _id: this.state.user_info.user_id,
+            name: `${this.state.user_info.first_name} ${this.state.user_info.last_name}`,
+            avatar: this.state.user_pic,
+          }
+        }
+        tmp.push(message)
+        idx = idx + 1
+      }
+    }
+
+    this.setState({ messages: tmp });
   }
 
   onSend(messages = []) {
@@ -130,7 +155,7 @@ class ChatPage extends Component {
   }
 
   onPressAvatar = user => {
-    this.navigation.navigate('ProfileScreen', {user_id: user._id});
+    this.navigation.navigate('ProfileScreen', { user_id: user._id });
   }
 
   render() {
@@ -144,7 +169,7 @@ class ChatPage extends Component {
         }}
         showUserAvatar={true}
         onPressAvatar={this.onPressAvatar}
-        // renderUsernameOnMessage={true}
+      // renderUsernameOnMessage={true}
       />
     )
   }
