@@ -4,6 +4,7 @@ import {
 } from 'react-navigation';
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Register from '../screens/Register'
 import Login from '../screens/Login'
@@ -42,7 +43,7 @@ const AddPostTabStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="plus" size={30} color={focused ? '#2196F3' : '#808080'} />
+        return <MaterialIcon name="add-circle" size={60} color='#2196F3' />
       },
     }
   }
@@ -92,8 +93,8 @@ const RankTabStack = createStackNavigator(
 
 const AppSwitch = createBottomTabNavigator({
   HomeTab: HomeTabStack,
-  AddPostTab: AddPostTabStack,
   IMTab: IMTabStack,
+  AddPostTab: AddPostTabStack,
   ProfileTab: ProfileTabStack,
   RankTab: RankTabStack,
 },
