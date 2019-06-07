@@ -66,7 +66,7 @@ class ContactPage extends Component {
 
   render() {
     return (
-      <View >
+      <View style={{flex:1}}>
         <FlatList
           data={this.state.data}
           keyExtractor={x => x.contact_info.user_id}
