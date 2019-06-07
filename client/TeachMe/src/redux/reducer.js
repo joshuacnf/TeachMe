@@ -5,7 +5,6 @@ const initialState = {
         last_name: '',
         pic_id: '',
         institution: '', 
-	    reputation: -1,
         email: '',
         password: '',
     },
