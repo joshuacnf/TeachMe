@@ -25,11 +25,16 @@ class Login extends Component {
       this.state = {
           email: props.userInfo.email,
           password: props.userInfo.password,
+          showTheThing: false,
       }
   }
   changeReduxStore(userInfo) {
         this.props.setUserInfo(userInfo);
     };
+
+ showError() {
+   this.setState({showTheThing: true});
+ };
 
   login() {
     userInfo = {
@@ -43,7 +48,7 @@ class Login extends Component {
     .then(res => {
         if(res.status == 404){
           // login failed
-          this.setState({email:'', password:''})
+          this.setState({email:'', password:''});
           //  add error message to user
         }
         else if (res.status == 200){
@@ -54,6 +59,7 @@ class Login extends Component {
     })
     .catch(error => {
         console.log(error.response)
+        this.showError();
     });
   }
 
@@ -72,6 +78,13 @@ class Login extends Component {
             <Text style={styles.title}>An App made for online and offline tutoring</Text>
           </View>
           <View style={styles.formContainer}>
+            { this.state.showTheThing &&
+            <TouchableOpacity
+              style={styles.errorContainer}
+            >
+              <Text style={styles.errorText}>Incorrect username or password</Text>
+            </TouchableOpacity>
+            }
             <TextInput
               autoCapitalize = 'none'
               style={styles.input}
@@ -145,6 +158,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#000000',
     paddingHorizontal: 20
+  },
+  errorText: {
+    color: 'red'
   },
   buttonContainer: {
     backgroundColor: '#1a8cff',

@@ -6,6 +6,9 @@ import { connect } from "react-redux"
 import axios from 'axios'
 
 class ContactPage extends Component {
+  static navigationOptions = {
+    title: 'Contact',
+  }
 
   constructor(props) {
     super();

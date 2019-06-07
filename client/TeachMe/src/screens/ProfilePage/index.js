@@ -14,7 +14,7 @@ import { Avatar } from 'react-native-elements';
 
 class ProfilePage extends Component {
   static navigationOptions = {
-    title: 'User'
+    title: 'Profile'
   }
 
   constructor(props) {
