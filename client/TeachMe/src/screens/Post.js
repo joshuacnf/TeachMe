@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
+<<<<<<< HEAD
 import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+=======
+import { View, Text, Button, FlatList,StyleSheet, TouchableOpacity,Image } from 'react-native';
+>>>>>>> 8dfab084b45b3d886dfa2638c773790301a1c18b
 import { Card } from 'react-native-elements';
 
 //import styles from './style'
@@ -128,14 +132,7 @@ export default class Post extends Component {
                 </View>
                 :
                 <View style={styles.container}>
-                    <TouchableOpacity onPress={()=>this.navigation.navigate("PostProfileScreen",{user_id: this.state.post.post_summary.user_info.user_id})}>
-                        <Text style={{fontSize:18,}}>
-                            {this.state.post.post_summary.user_info.first_name + " " + this.state.post.post_summary.user_info.last_name}
-                        </Text>
-                    </TouchableOpacity>
-                    <Text style={{fontSize:12,color:'grey',marginTop:8}}>
-                        {this.epochToTime(this.state.post.post_summary.timestamp_create)}
-                    </Text>
+                    
 
                     <View style={{flexDirection:'row'}}>
                         <Image
