@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  FlatList
 } from 'react-native';
 import { styles } from './styles';
 import ImagePicker from 'react-native-image-picker';
@@ -26,11 +27,15 @@ class ProfilePage extends Component {
       userId: navig_user_id == undefined ? props.userInfo.user_id : navig_user_id,
       imageSource: null,
       userInfo: null,
+
+      refreshing: true,
+      posts: [],
     }
   }
 
   componentWillMount() {
     this.fetchData()
+    this.fetchPosts()
     this.props.navigation.addListener('willFocus', this.fetchData)
   }
 
@@ -77,6 +82,71 @@ class ProfilePage extends Component {
       }
     })
   }
+
+  epochToTime = epoch => {
+    var a = new Date(epoch);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    if (hour < 10) {
+      hour = '0' + hour;
+    }
+    var min = a.getMinutes();
+    if (min < 10) {
+      min = '0' + min;
+    }    
+    var sec = a.getSeconds();
+    var time = month + ' ' + date + ' ' + year + ' ' + hour + ':' + min;
+    return time;
+  }
+
+  fetchPosts = async() => {
+    this.setState({ refreshing: true })
+    // TODO: posts of this user 
+    axios.get('http://18.221.224.217:8080/get/post_summary_list', {
+      params: {
+        user_id: this.state.userId
+      }
+    }).then(res => {
+        console.log(res.data)
+        this.setState({ refreshing: false })
+        this.setState({ posts: res.data });
+      })
+  }
+
+  showPost = post_id => {
+    this.navigation.navigate('PostScreen', { post_id: post_id });
+  }
+
+  renderItem = item => {
+    return (
+      <View style={{marginTop:5,paddingLeft:8,paddingBottom:3}}>
+        <TouchableOpacity onPress={() => this.showPost(item.post_id)} >
+          {item.tags.length >0 ? this.renderTags(item.tags): null}
+          <Text style={{fontSize:18,fontWeight:'bold'}}>{item.title}</Text>
+          <Text style={{color: '#a9a9a9', fontWeight: '400',marginTop:10}}>
+            {this.epochToTime(item.timestamp_create)}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  renderTags = (tags) => {
+    return (
+      <View style={{marginTop:2,marginBottom:5,flexDirection:'row'}}>
+        {tags.map(item => {
+          return (
+            <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}} key={item}>
+              {item}
+            </Text>
+          )
+        })}
+      </View>
+    );
+  };
 
   startChat = contact_id => {
     this.navigation.navigate('ChatScreen', {contact_id: contact_id});
@@ -163,13 +233,22 @@ class ProfilePage extends Component {
         </View>
 
         <View style={{ flex: 0.5 }}>
-          <TouchableOpacity style={styles.row}>
+          <View style={styles.row}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>View past posts</Text>
-          </TouchableOpacity>
+          </View>
+          <FlatList
+            data={this.state.posts}
+            keyExtractor={item => item.post_id}
+            renderItem={({ item }) => this.renderItem(item)}
+            ItemSeparatorComponent={this.renderSeparator}
+            onRefresh={() => this.fetchPosts()}
+            refreshing={this.state.refreshing}
+            style={{marginHorizontal:20}}
+          />
 
-          <TouchableOpacity style={styles.row}>
+          {/* <View style={styles.row}>
             <Text style={{ fontSize: 18, color: 'grey', fontWeight: 'bold' }}>View past answers</Text>
-          </TouchableOpacity>
+          </View> */}
 
           {!this.state.other_user && 
           <TouchableOpacity style={styles.row} onPress={() => this.navigation.navigate("SignIn")}>

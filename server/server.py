@@ -103,6 +103,7 @@ async def get_register(request):
     user_info['verified'] = False
     user_info['verification_code'] = generate_rand_string(64)
     user_info['pic_id'] = ''
+    user_info['score'] = 0
 
     db_user.insert_one(user_info)
     db_user.update_one({'_id': user_info['_id']},
@@ -296,6 +297,23 @@ async def get_chat_summary_list(request):
     print(json.dumps(result, indent=2))
     return web.Response(status=200, text=json.dumps(result))
 
+@routes.get('/get/rank')
+async def get_rank(request):
+    query = get_request_query(request)
+    user_id = query['user_id'][0]
+
+    user_info = db_user.find_one({'_id': ObjectId(user_id)})    
+    inst = user_info['institution']
+    tmp = db_user.find({'institution': inst, 'verified': True}).sort(
+        'score', pymongo.DESCENDING)
+
+    result = []
+    for x in tmp:
+        del x['_id'], x['password']
+        result.append(x)
+
+    return web.Response(status=200, text=json.dumps(result))
+
 ########################### Request Handlers (POST) ###########################
 
 # post post request handler
@@ -371,6 +389,10 @@ async def post_answer(request):
     post_id = answer['post_id']
     db_post.update_one({'_id': ObjectId(post_id)},
         {'$push': {'answer_ids': answer_id}})
+
+    user_id = answer['user_info']['user_id']
+    db_user.update_one({'_id': ObjectId(user_id)},
+        {'$inc': {'score': 1}})
 
     return web.Response(status=200, text='success (answer)')
 
