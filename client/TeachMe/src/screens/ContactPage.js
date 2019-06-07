@@ -21,7 +21,7 @@ class ContactPage extends Component {
   }
 
   componentWillMount() {
-    this.setState({ refreshing: true })    
+    this.setState({ refreshing: true })
     this.props.navigation.addListener('willFocus', this.fetchData)
   }
 
@@ -32,7 +32,7 @@ class ContactPage extends Component {
       }
     });
 
-    this.setState({      
+    this.setState({
       data: res1.data,
     });
 
@@ -40,9 +40,6 @@ class ContactPage extends Component {
     for (var i = 0; i < l; i++) {
       pic_id = res1.data[i].contact_info.pic_id;
       user_id = res1.data[i].contact_info.user_id;
-      console.log('i ' + i)
-      console.log('user_id ' + user_id)
-      console.log('pic_id ' + pic_id)
       if (pic_id !== undefined && pic_id != "") {
         res2 = await axios.get('http://18.221.224.217:8080/get/pic', {
           params: {
@@ -53,7 +50,7 @@ class ContactPage extends Component {
         pic_cache_new[user_id] = res2.data;
         this.setState({
           pic_cache: pic_cache_new,
-        })        
+        })
       }
     }
 
@@ -100,21 +97,13 @@ class ContactPage extends Component {
       )
     }
     else {
-      // console.log(this.state.pic_cache[contact_id])
       return (
         <TouchableOpacity onPress={() => this.showChat(contact_id)}>
           <ListItem
-            // leftAvatar={{
-            //   rounded: true,
-            //   source: { uri : this.state.pic_cache[pic_id] },
-            // }}
-            avatar={
-              <Image
-                rounded
-                imageProps={{ resizeMode: 'cover' }}
-                source={{ uri: this.state.pic_cache[pic_id] }}
-              />
-            }
+            leftAvatar={{
+              rounded: true,
+              source: { uri: this.state.pic_cache[contact_id] },
+            }}
             title={`${item.contact_info.first_name} ${item.contact_info.last_name}`}
             subtitle={item.message.content}
             containerStyle={{ borderBottomWidth: 0 }}
