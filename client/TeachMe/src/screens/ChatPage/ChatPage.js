@@ -16,7 +16,7 @@ class ChatPage extends Component {
     this.navigation = props.navigation;
     this.state = {
       messages: [],
-      contact_id: '5cf618e2f3295c559afd3282',//props.navigation.state.params.contact_id,
+      contact_id: props.navigation.state.params.contact_id,
       contact_info: '',
       user_info: '',
     };
