@@ -14,6 +14,18 @@ export default class Post extends Component {
         axios.get('http://18.221.224.217:8080/get/post', {params: {post_id: this.state.post_id}})
             .then(res => {
                 this.setState({post: res.data});
+                
+                axios.get('http://18.221.224.217:8080/get/pic',{
+                    params:{
+                        pic_id:this.state.post.post_summary.user_info.pic_id
+                    }
+                })
+                    .then(res => {
+                        this.setState({
+                            imageSource: { uri: res.data }
+                    })
+                    });
+                
                 for (const answer_id of res.data.answer_ids){
                     console.log(answer_id);
                     axios.get('http://18.221.224.217:8080/get/answer', {params: {answer_id: answer_id}})
@@ -21,7 +33,8 @@ export default class Post extends Component {
                         var joined = this.state.answers.concat(res.data);
                         this.setState({answers: joined});
                     })
-                }
+                };
+
             })
     }
 
@@ -32,6 +45,7 @@ export default class Post extends Component {
             post_id: props.navigation.state.params.post_id,
             post: null,
             answers: [],
+            imageSource:null
         };
     }
 
@@ -131,10 +145,18 @@ export default class Post extends Component {
                     
 
                     <View style={{flexDirection:'row'}}>
-                        <Image
-                            source={require('../images/default.png')}
-                            style={styles.userImage}
-                        />  
+                        
+                        {this.state.imageSource?
+                            <Image
+                                source={this.state.imageSource}
+                                style={styles.userImage}
+                            />  :
+                            <Image 
+                                source={require('../images/default.png')}
+                                style={styles.userImage}
+                            />
+                        }
+                        
                         <View style={{marginLeft:10}}>
                             <Text style={{fontSize:18,}}>
                                 {this.state.post.post_summary.user_info.last_name}
