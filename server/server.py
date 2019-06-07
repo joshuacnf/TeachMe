@@ -222,10 +222,6 @@ async def get_post_summary_list(request):
     result.sort(key=lambda x: x['timestamp_update'],
         reverse=True)
 
-    # print('=====================result=========================')
-    # print(result)
-    # print('================================================')
-
     return web.Response(status=200, text=json.dumps(result))
 
 @routes.get('/get/post_summary_list_of_user')
@@ -243,8 +239,6 @@ async def get_post_summary_list(request):
 @routes.get('/get/post')
 async def get_post(request):
     query = get_request_query(request)
-    print(str(request.url))
-    print(query)
     post_id = query['post_id'][0]
 
     result = db_post.find_one({'_id': ObjectId(post_id)})
@@ -267,18 +261,18 @@ async def get_answer(request):
         return web.Response(status=404, text='No Result Found')
 
     del result['_id']
-
-    print(json.dumps(result))
+    
     return web.Response(status=200, text=json.dumps(result))
 
 # get pic request handler
 @routes.get('/get/pic')
 async def get_pic(request):
     query = get_request_query(request)
+
+    if 'pic_id' not in query:
+        return web.Response(status=404, text='No Result Found')
+
     pic_id = query['pic_id'][0]
-
-    print('pic_id: {}'.format(pic_id))
-
     result = db_pic.find_one({'_id': ObjectId(pic_id)})
 
     if result is None:
@@ -328,8 +322,6 @@ async def get_chat_summary_list(request):
                     'message': doc})
     result = tmp
 
-    print('=======================CHAT SUMMARY LIST==========================')
-    print(json.dumps(result, indent=2))
     return web.Response(status=200, text=json.dumps(result))
 
 @routes.get('/get/rank')
@@ -362,7 +354,6 @@ async def post_post(request):
     post['post_summary']['timestamp_update'] = post['post_summary']['timestamp_create']
 
     author_id = post['post_summary']['user_info']['user_id']
-    print('author_id: {}'.format(author_id))
     author_info = db_user.find_one({'_id': ObjectId(author_id)})
     del author_info['_id'], author_info['password']
     post['post_summary']['user_info'] = author_info
@@ -409,8 +400,6 @@ async def post_answer(request):
     answer['pic_ids'] = []
     answer['timestamp_create'] = int(time.time() * 1000.0)
 
-    print('answer received: {}'.format(answer))
-
     if 'pics' in answer:
         for p in answer['pics']:
             doc = {'img64': p}
@@ -441,9 +430,6 @@ async def post_profile_pic(request):
 
     pic = await request.text()
 
-    # print(user_id)
-    # print('post_pic: {}'.format(pic))
-
     user_info = db_user.find_one({'_id': ObjectId(user_id)})
     if ('pic_id' in user_info) and (user_info['pic_id'] != ''):
         db_pic.replace_one({'_id': ObjectId(user_info['pic_id'])},
@@ -464,7 +450,6 @@ async def post_message(request):
     # src_id, dst_id = query['from'][0], query['to'][0]
 
     msg = await request.json()
-    print(msg)
 
     db_message.insert_one(msg)
     del msg['_id']
