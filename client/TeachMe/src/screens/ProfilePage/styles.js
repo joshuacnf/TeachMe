@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },  
     header:{
-        flex:0.5,
+        flex:0.4,
         paddingTop:15,
         alignItems: 'center',
     },
@@ -18,21 +18,22 @@ const styles = StyleSheet.create({
         borderColor: 'grey',
     },
     userName:{
-        marginTop:20,
+        marginTop:15,
         fontSize:25,
         color:'grey'
     },
     sendMessage:{
-            marginTop:20,
+            marginTop:15,
             backgroundColor:'#1a8cff',
             alignItems: 'center',
             width:'90%',
             borderRadius: 23,
             justifyContent:'center',
-            height:45
+            height:45,
         
     },
    row:{
+       marginTop:30,
        width:'100%',
        height:50,
        borderBottomColor: 'grey',

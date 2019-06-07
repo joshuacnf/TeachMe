@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View,Text,TextInput,Button,TouchableOpacity,
-        ScrollView,Keyboard,TouchableWithoutFeedback
+        ScrollView,Keyboard,TouchableWithoutFeedback,Alert
     } from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import {styles} from './styles';
@@ -46,6 +46,17 @@ class PostPage extends Component {
   }
 
   _post() {
+    if(this.state.title === ''){
+      Alert.alert(
+        'Alert',
+        'Please enter a title',
+        [
+          {text: 'OK'},
+        ],
+        {cancelable: false},
+      );
+      return;
+    }
     post_content = {
       post_summary: {
         user_info: {
@@ -107,76 +118,6 @@ class PostPage extends Component {
       <TagButton title={name} key={name} delete={this._deleteTag.bind(this)} />
     )
   }
-
-
-
-  /* _showTag(){
-       
-       this.setState((prevState) => {
-           return {isKeyboardVisible:!prevState.isKeyboardVisible};
-       });
-   }
- 
-   _renderSelectTags(){
-           if(this.state.isKeyboardVisible){
-               return (
-                   
-                   <KeyboardAccessoryView 
-                       hideBorder={true}
-                       style={{backgroundColor:'white',marginBottom:-120}}
-                   > 
-                       <View style={styles.textInputView}>
-                           <View>
-                               <Text style={{fontSize:16,color:'grey'}}>Suggested</Text>
-                           </View>
-   
-
-   /* _showTag(){
-        
-        this.setState((prevState) => {
-            return {isKeyboardVisible:!prevState.isKeyboardVisible};
-        });
-    }
-
-    _renderSelectTags(){
-            if(this.state.isKeyboardVisible){
-                return (
-                    
-                    <KeyboardAccessoryView 
-                        hideBorder={true}
-                        style={{backgroundColor:'white',marginBottom:-120}}
-                    > 
-                        <View style={styles.textInputView}>
-                            <View>
-                                <Text style={{fontSize:16,color:'grey'}}>Suggested</Text>
-                            </View>
-    
-                            
-                            <View style={styles.tagTyping}>
-                                <TextInput
-                                    underlineColorAndroid="transparent"
-                                    placeholder="Enter a tag"
-                                    style={styles.textInput}
-                                    keyboardType="default"
-                                    autoFocus={true}
-                                />
-                            
-                                <TouchableOpacity style={styles.textInputButton}>
-                                    <Text style={{color:'white',fontSize:16}}>Add</Text>
-                                </TouchableOpacity>   
-                            </View>
-                        
-                        </View>
-                    </KeyboardAccessoryView>           
-                );
-            }
-
-            else{
-                return null;
-            }
-            
-    }*/
-
 
     render(){
         return (

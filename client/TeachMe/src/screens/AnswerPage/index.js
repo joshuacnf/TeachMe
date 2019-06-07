@@ -30,12 +30,14 @@ class AnswerPage extends Component{
     }
 
     _answer(){
+        var timeStamp = Math.floor(Date.now());
         answer_content = {
             user_info: this.props.userInfo,
             // user_id: this.state.user_id,
             post_id: this.state.post_id,
             content: this.state.content,
             pics: this.state.pics,
+            timeStamp:timeStamp
         };
         axios.post('http://18.221.224.217:8080/post/answer', answer_content)
             .then(res => {

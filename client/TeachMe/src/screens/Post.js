@@ -98,13 +98,18 @@ export default class Post extends Component {
                 }
 
                 <View>
-                    <Text style={{color:'grey'}}>
+                    <Text style={{}}>
                         {answer.user_info.first_name+' '+answer.user_info.last_name}
                     </Text>
 
                     <Text style={{fontSize:17,marginTop:6}}>
                         {answer.content}
                     </Text>
+
+                    <Text style={{color:'grey',marginTop:6}}>
+                        {this.epochToTime(answer.timestamp_create)}
+                    </Text>
+
                 </View>
                    
             </View>

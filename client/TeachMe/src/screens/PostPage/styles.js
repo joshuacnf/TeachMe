@@ -57,14 +57,18 @@ const styles = StyleSheet.create({
       },
       title:{
           fontSize:20,
-          width:'100%'
-          
+          width:'100%',
+          borderBottomColor: '#DCDCDC',
+          borderBottomWidth: 2,
+          paddingBottom: 8,
       },
       content:{
           fontSize:18,
-          marginTop:15,
+          marginTop:10,
           width:'100%',
-          height:240
+          height:240,
+          borderBottomColor: '#DCDCDC',
+          borderBottomWidth: 2,
       },
       tagArea:{
           marginTop:15
