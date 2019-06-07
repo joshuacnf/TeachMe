@@ -57,7 +57,7 @@ class ProfilePage extends Component {
     }
   }
   
-  renderSeparator = () => {
+  /*renderSeparator = () => {
     return (
       <View
         style={{
@@ -67,7 +67,7 @@ class ProfilePage extends Component {
         }}
       />
     );
-  }
+  }*/
 
   fetchData = async () => {
     axios.get('http://18.221.224.217:8080/get/profile', {
@@ -272,7 +272,7 @@ class ProfilePage extends Component {
             data={this.state.posts}
             keyExtractor={item => item.post_id}
             renderItem={({ item }) => this.renderItem(item)}
-            ItemSeparatorComponent={this.renderSeparator}
+            // ItemSeparatorComponent={this.renderSeparator}
             onRefresh={() => this.fetchPosts()}
             refreshing={this.state.refreshing}
             style={{marginHorizontal:20,height:100}}
