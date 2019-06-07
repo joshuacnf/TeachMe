@@ -21,8 +21,9 @@ class Home extends Component {
     super();
     this.navigation = props.navigation;
     this.state = {
-      search: '',
+      search: '',      
       data: [],
+      refreshing: '',
     }
   }
 
@@ -31,12 +32,14 @@ class Home extends Component {
     this.props.navigation.addListener('didFocus', this.fetchData)
   }
 
-  fetchData = () => {
+  fetchData = async () => {
+    this.setState({ refreshing: true })
     axios.get('http://18.221.224.217:8080/get/post_summary_list', {
       params: {
         user_id: this.props.userInfo.user_id
       }
     }).then(res => {
+        this.setState({ refreshing: false })
         this.setState({ data: res.data });
       })
   }
@@ -70,7 +73,7 @@ class Home extends Component {
         <View style={{marginTop:2,marginBottom:5,flexDirection:'row'}}>
           {tags.map(item => {
             return (
-              <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}}>
+              <Text style={{backgroundColor:'#F5F5F5',padding:5,fontSize:12,color:'grey'}} key={item}>
                 {item}
               </Text>
             )
@@ -142,6 +145,8 @@ class Home extends Component {
           keyExtractor={item => item.post_id}
           renderItem={({ item }) => this.renderItem(item)}
           ItemSeparatorComponent={this.renderSeparator}
+          onRefresh={() => this.fetchData()}
+          refreshing={this.state.refreshing}
         />
       </View>
     );

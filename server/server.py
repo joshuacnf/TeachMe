@@ -380,17 +380,18 @@ async def post_profile_pic(request):
     query = get_request_query(request)
     user_id = query['user_id'][0]
 
-    pic = await request.json()
+    pic = await request.text()
 
     print(user_id)
     print('post_pic: {}'.format(pic))
 
     user_info = db_user.find_one({'_id': ObjectId(user_id)})
     if 'pic_id' in user_info:
-        db_pic.replace_one({'_id': ObjectId(user_info['pic_id'])}, pic)
+        db_pic.replace_one({'_id': ObjectId(user_info['pic_id'])}, 
+            {'b64': pic})
     else:
-        # doc = {'b64': pic}
-        db_pic.insert_one(pic)
+        doc = {'b64': pic}
+        db_pic.insert_one(doc)
         pic_id = str(doc['_id'])
         db_user.update_one({'_id': ObjectId(user_id)},
             {'$set': {'pic_id': pic_id}})

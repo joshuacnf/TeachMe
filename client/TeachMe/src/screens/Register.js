@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, Button } from 'react-native';
-import styles from './style';
+import { View, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import axios from 'axios';
 import { TextInput } from 'react-native-gesture-handler';
 
@@ -8,7 +7,7 @@ export default class Register extends Component {
     static navigationOptions = {
         title: "Register"
     };
-  
+
     constructor(props) {
         super(props);
         this.navigation = props.navigation;
@@ -66,12 +65,65 @@ export default class Register extends Component {
                     placeholder="Password"
                     style={styles.input}
                 />
-                <Button 
-                    title="Sign Up" 
-                    onPress={() => this.register()} 
-                    style={styles.button}
-                />
+                <TouchableOpacity
+                  title="Sign Up"
+                  style={styles.buttonContainer}
+                  onPress={() => this.register()}
+                >
+                  <Text style={styles.buttonText}>SIGNUP</Text>
+                </TouchableOpacity>
             </View>
         );
     }
 }
+/*
+#1a8cff
+    backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: '#2980b9',
+*/
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    padding: 20,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    flexGrow: 1,
+    justifyContent: 'center',
+    marginTop:20
+  },
+  logo: {
+    width: 200,
+    height: 200
+  },
+  title: {
+    color: '#FFF',
+    marginTop: 10,
+    width: 160,
+    textAlign: 'center',
+    opacity: 0.9
+  },
+  input: {
+    height: 40,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    marginBottom: 20,
+    color: '#000000',
+    paddingHorizontal: 20
+  },
+  buttonContainer: {
+    backgroundColor: '#1a8cff',
+    paddingVertical: 15
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#FFFFFF',
+    fontWeight: '700'
+  },
+  formContainer:{
+    marginTop:50
+  }
+});
