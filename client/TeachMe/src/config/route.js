@@ -28,7 +28,7 @@ const HomeTabStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="home" size={30} color={focused ? '#2196F3' : '#808080'} />
+        return <Icon name="home" size={25} color={focused ? '#2196F3' : '#808080'} />
       }
     }
   }
@@ -42,7 +42,7 @@ const AddPostTabStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <MaterialIcon name="add-circle" size={60} color='#2196F3' />
+        return <MaterialIcon name="add-circle" size={50} color='#2196F3' />
       },
     }
   }
@@ -57,7 +57,7 @@ const IMTabStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="bubbles" size={30} color={focused ? '#2196F3' : '#808080'} />
+        return <Icon name="bubbles" size={25} color={focused ? '#2196F3' : '#808080'} />
       }
     }
   }
@@ -72,7 +72,7 @@ const ProfileTabStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="user" size={30} color={focused ? '#2196F3' : '#808080'} />
+        return <Icon name="user" size={25} color={focused ? '#2196F3' : '#808080'} />
       }
     }
   }
@@ -86,7 +86,7 @@ const RankTabStack = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return <Icon name="trophy" size={30} color={focused ? '#2196F3' : '#808080'} />
+        return <Icon name="trophy" size={25} color={focused ? '#2196F3' : '#808080'} />
       },
     }
   }

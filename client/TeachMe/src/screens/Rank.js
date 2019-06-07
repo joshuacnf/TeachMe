@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Button, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Button, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { SearchBar, List, ListItem, Avatar } from "react-native-elements"
 import { Card } from '@shoutem/ui/components/Card'
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
@@ -46,6 +46,7 @@ class Rank extends Component {
     this.navigation = props.navigation;
     this.state = {
       rank_info: [],
+      rankNumber: 0
     };
   }
 
@@ -57,6 +58,11 @@ class Rank extends Component {
   fetchData = () => {
     axios.get('http://18.221.224.217:8080/get/rank', { params: { user_id: this.props.userInfo.user_id } })
       .then(res => {
+        var i = 1;
+        for (var key in res.data) {
+          res.data[key].rankNumber = i++;
+        }
+        console.log(res.data);
         this.setState({ rank_info: res.data });
       })
   }
@@ -84,11 +90,30 @@ class Rank extends Component {
   renderItem = item => {
     return (
       <View style={{ marginTop: 5, paddingLeft: 5, paddingBottom: 3 }}>
-        <TouchableOpacity onPress={() => this.showProfile(item.user_id)} >
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.first_name + " " + item.last_name}</Text>
-          <Text style={{ color: '#a9a9a9', fontWeight: '400', marginTop: 10 }}>
-            {item.score}
-          </Text>
+        <TouchableOpacity onPress={() => this.showProfile(item.user_id)} style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}} >
+          <View style={{ flexWrap: 'wrap', flexDirection: 'row' , margin: 20,  alignItems: 'center'}}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.rankNumber+ " "}</Text>
+            <Text style={{ fontSize: 16}} >{item.first_name + " " + item.last_name}</Text>
+          </View>
+          <View style={{ margin: 20, flexWrap: 'wrap', flexDirection:'row', alignItems: 'center' }}>
+          { item.rankNumber == 1 &&
+          <Image
+            style={{width: 30, height: 40}}
+            source={require('../images/gold.png')}
+          />}
+          { item.rankNumber == 2 &&
+          <Image
+            style={{width: 30, height: 40}}
+            source={require('../images/silver.png')}
+          />}
+          { item.rankNumber == 3 &&
+          <Image
+            style={{width: 30, height: 40}}
+            source={require('../images/bronze.png')}
+          />}
+             <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{"   "+ item.score}</Text>
+             <Text> pts</Text>
+          </View>
         </TouchableOpacity>
       </View>
     );

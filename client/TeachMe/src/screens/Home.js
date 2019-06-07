@@ -21,9 +21,9 @@ class Home extends Component {
     super();
     this.navigation = props.navigation;
     this.state = {
-      search: '',      
       data: [],
       refreshing: '',
+      keyword: '',      
     }
   }
 
@@ -37,6 +37,18 @@ class Home extends Component {
     axios.get('http://18.221.224.217:8080/get/post_summary_list', {
       params: {
         user_id: this.props.userInfo.user_id
+      }
+    }).then(res => {
+        this.setState({ refreshing: false })
+        this.setState({ data: res.data });
+      })
+  }
+
+  fetchSearchResults = async () => {
+    this.setState({ refreshing: true })
+    axios.get('http://18.221.224.217:8080/get/post_summary_list', {
+      params: {
+        keyword: this.state.keyword
       }
     }).then(res => {
         this.setState({ refreshing: false })
@@ -139,7 +151,7 @@ class Home extends Component {
         <SearchBar
           placeholder="Type Here..."
           onChangeText={this._updateSearch}
-          value={this.state.search}
+          value={this.state.keyword}
           style={styles.search}
         />
         <FlatList

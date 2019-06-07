@@ -12,6 +12,8 @@ import configureStore from './src/redux/store';
 
 const { persistor, store } = configureStore();
 
+console.disableYellowBox = true
+
 const ReduxApp = () => (
   <Provider store={store}>
     <PersistGate persistor={persistor}>

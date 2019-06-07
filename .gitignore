@@ -1,3 +1,4 @@
 .vscode
 .vscode/*
 client/.idea
+client/TeachMe/package-lock.json
