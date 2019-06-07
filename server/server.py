@@ -207,6 +207,17 @@ async def get_post_summary_list(request):
 
     return web.Response(status=200, text=json.dumps(result))
 
+@routes.get('/get/post_summary_list_of_user')
+async def get_post_summary_list(request):
+    query = get_request_query(request)
+    user_id = query['user_id'][0]        
+
+    result = [ x['post_summary'] for x in db_post.find(
+        {'post_summary.user_info.user_id': user_id}).sort(
+            'post_summary.timestamp_update', pymongo.DESCENDING) ]
+
+    return web.Response(status=200, text=json.dumps(result))
+
 # get post request handler
 @routes.get('/get/post')
 async def get_post(request):
@@ -244,6 +255,8 @@ async def get_answer(request):
 async def get_pic(request):
     query = get_request_query(request)
     pic_id = query['pic_id'][0]
+
+    print('pic_id: {}'.format(pic_id))
 
     result = db_pic.find_one({'_id': ObjectId(pic_id)})
 
@@ -294,6 +307,7 @@ async def get_chat_summary_list(request):
                     'message': doc})
     result = tmp
 
+    print('=======================CHAT SUMMARY LIST==========================')
     print(json.dumps(result, indent=2))
     return web.Response(status=200, text=json.dumps(result))
 
