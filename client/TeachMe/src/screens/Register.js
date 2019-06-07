@@ -35,6 +35,7 @@ export default class Register extends Component {
             .catch(error => {
                 console.log(error.response)
             });
+        this.navigation.navigate('SignIn')
     }
 
     render() {
