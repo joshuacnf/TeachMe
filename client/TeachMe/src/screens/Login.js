@@ -53,6 +53,8 @@ class Login extends Component {
         }
         else if (res.status == 200){
           // login succeeded
+          console.log("login\\\\\\\\\\\\\\\\\\")
+          console.log(res.data)
           this.changeReduxStore(res.data);
           this.navigation.navigate('BottomTab', {email: this.state.email});
         }

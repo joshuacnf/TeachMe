@@ -23,14 +23,17 @@ export default class Post extends Component {
         });
 
         this.setState({post:res1.data});
-
-        const res2 = await axios.get('http://18.221.224.217:8080/get/pic',{
-            params:{
-                pic_id:this.state.post.post_summary.user_info.pic_id
-            }
-        });
-
-        this.setState({imageSource:{uri:res2.data}});
+        console.log("pic id")
+        console.log(this.state.post)
+        const user_pic_id = this.state.post.post_summary.user_info.pic_id
+        if (user_pic_id != undefined && user_pic_id != ""){
+            const res2 = await axios.get('http://18.221.224.217:8080/get/pic',{
+                params:{
+                    pic_id: user_pic_id
+                }
+            });
+            this.setState({imageSource:{uri: res2.data}});
+        }
 
         //this.setState({answers:[]});
         for(const answer_id of res1.data.answer_ids){
