@@ -62,11 +62,7 @@ class Rank extends Component {
   }
 
   showProfile = user_id => {
-<<<<<<< HEAD
-    this.navigation.navigate('OtherProfileScreen', {user_id: user_id});
-=======
     this.navigation.navigate('OtherProfileScreen', { user_id: user_id });
->>>>>>> 021ea07b72db13ac06aa218f4ed10b36f5167e92
   }
 
   // styles = StyleSheet.create({
