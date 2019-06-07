@@ -66,6 +66,7 @@ const ProfileTabStack = createStackNavigator(
   {
     ProfileScreen: ProfilePage,
     ChatScreen: ChatPage,
+    PostScreen: Post
   },
   {
     navigationOptions: {
