@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { FlatList, Text, View, Image, TouchableOpacity} from "react-native"
+import { FlatList, Text, View, Image, TouchableOpacity } from "react-native"
 import { List, ListItem, Avatar } from "react-native-elements"
 import { connect } from "react-redux"
 
@@ -21,45 +21,49 @@ class ContactPage extends Component {
   }
 
   componentWillMount() {
-    this.setState({ refreshing: true })
-    this.fetchData();
+    this.setState({ refreshing: true })    
     this.props.navigation.addListener('willFocus', this.fetchData)
   }
 
   fetchData = async () => {
-    axios.get('http://18.221.224.217:8080/get/chat_summary_list', {
+    res1 = await axios.get('http://18.221.224.217:8080/get/chat_summary_list', {
       params: {
         user_id: this.props.userInfo.user_id
       }
-    }).then(res => {
-      this.setState({ refreshing: false })
-      this.setState({ data: res.data });
-      for (var i = 0; i < res.data.length; i++) {
-        user_id = res.data[i].contact_info.user_id;
-        pic_id = res.data[i].contact_info.pic_id;
-        if (pic_id !== undefined && pic_id != "") {
-          axios.get('http://18.221.224.217:8080/get/pic', {
-            params: {
-              pic_id: pic_id
-            }
-          }).then(res2 => {
-            // pic_cache_ = this.state.pic_cache
-            // pic_cache_[user_id] = res2.data
-            this.setState({
-              pic_cache: {
-                ...this.state.pic_cache,
-                [user_id]: res2.data,
-              },
-            });
-            console.log(this.state.pic_cache);
-          })
-        }
+    });
+
+    this.setState({      
+      data: res1.data,
+    });
+
+    const l = this.state.data.length;
+    for (var i = 0; i < l; i++) {
+      pic_id = res1.data[i].contact_info.pic_id;
+      user_id = res1.data[i].contact_info.user_id;
+      console.log('i ' + i)
+      console.log('user_id ' + user_id)
+      console.log('pic_id ' + pic_id)
+      if (pic_id !== undefined && pic_id != "") {
+        res2 = await axios.get('http://18.221.224.217:8080/get/pic', {
+          params: {
+            pic_id: pic_id
+          }
+        })
+        var pic_cache_new = Object.assign({}, this.state.pic_cache)
+        pic_cache_new[user_id] = res2.data;
+        this.setState({
+          pic_cache: pic_cache_new,
+        })        
       }
+    }
+
+    this.setState({
+      refreshing: false,
     })
   }
 
   showChat = contact_id => {
-    this.navigation.navigate('ChatScreen', 
+    this.navigation.navigate('ChatScreen',
       { contact_id: contact_id })
   }
 

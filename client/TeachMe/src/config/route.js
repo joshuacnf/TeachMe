@@ -52,6 +52,7 @@ const IMTabStack = createStackNavigator(
   {
     ContactScreen: ContactPage,
     ChatScreen: ChatPage,
+    ProfileScreen: ProfilePage,
   },
   {
     navigationOptions: {
