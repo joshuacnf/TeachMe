@@ -63,8 +63,8 @@ def parse_email_address(s):
     q = s.find('.', p)
     if q == -1:
         return None
-    # if s[q:] != '.edu':
-    #     return None
+    if s[q:] != '.edu':
+        return None
     return s[p + 1: q]
 
 def send_verification_email(user_info):
@@ -242,6 +242,11 @@ async def get_post(request):
     post_id = query['post_id'][0]
 
     result = db_post.find_one({'_id': ObjectId(post_id)})
+    user_info = db_user.find_one({
+        '_id': ObjectId(result['post_summary']['user_info']['user_id'])
+    })
+    del user_info['_id'], user_info['password']
+    result['post_summary']['user_info'] = user_info
 
     if result is None:
         return web.Response(status=404, text='No Result Found')
@@ -256,6 +261,11 @@ async def get_answer(request):
     answer_id = query['answer_id'][0]
 
     result = db_answer.find_one({'_id': ObjectId(answer_id)})
+    user_info = db_user.find_one({
+        '_id': ObjectId(result['user_info']['user_id'])
+    })
+    del user_info['_id'], user_info['password']
+    result['user_info'] = user_info
 
     if result is None:
         return web.Response(status=404, text='No Result Found')
